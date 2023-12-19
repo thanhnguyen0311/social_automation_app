@@ -9,6 +9,7 @@ from models.device import Device
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 config_path = os.path.join(LDPLAYER_PATH, "vms", "config")
+vms_path = os.path.join(LDPLAYER_PATH, "vms")
 
 
 def open_file(filename, folder):
@@ -31,16 +32,16 @@ def create_ld():
     new_ldplayer = None
     try:
         id_list = []
-        file_list = os.listdir(config_path)
+        file_list = os.listdir(vms_path)
 
         for file in file_list:
-            if file[7:-7].isdigit():
-                id_list.append(file[7:-7])
+            if file[:7] == "leidian":
+                id_list.append(file[7:])
             else:
                 continue
 
         i = 0
-        if len(id_list) > 1:
+        if len(id_list) > 0:
             id_list = sorted(id_list, key=lambda x: int(x))
 
             while str(i) in id_list:
@@ -103,11 +104,11 @@ def create_ld():
 def clone_ld(data):
     try:
         id_list = []
-        file_list = os.listdir(config_path)
+        file_list = os.listdir(vms_path)
 
         for file in file_list:
-            if file[7:-7].isdigit():
-                id_list.append(file[7:-7])
+            if file[:7] == "leidian":
+                id_list.append(file[7:])
             else:
                 continue
 

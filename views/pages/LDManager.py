@@ -5,8 +5,9 @@ import tkinter as tk
 
 from ld_manager.create_ld import create_ld
 from ld_manager.get_list_ld import get_list_ld
-from ld_manager.quit_ld import quit_all
-from ld_manager.remove_ld import remove_all_ld
+from ld_manager.quit_ld import quit_all, quit_ld
+from ld_manager.reboot_ld import reboot_ld
+from ld_manager.remove_ld import remove_all_ld, remove_ld
 from ld_manager.run_ld import run_ld
 from ld_manager.sort_ld import sort_ld
 
@@ -53,9 +54,7 @@ class LDManager_Page(tk.Frame):
         frame.uuid_devices = tk.Label(frame, text="Facebook")
         frame.uuid_devices.grid(row=0, column=4, sticky="w", padx=40, pady=5)
         frame.uuid_devices = tk.Label(frame, text="Status")
-        frame.uuid_devices.grid(row=0, column=5, sticky="w", padx=50, pady=5)
-        frame.uuid_devices = tk.Label(frame, text="Action")
-        frame.uuid_devices.grid(row=0, column=6, sticky="w", padx=40, pady=5)
+        frame.uuid_devices.grid(row=0, column=5, sticky="w", padx=15, pady=5)
 
     def refresh(self):
         self.device_list.destroy()
@@ -71,6 +70,13 @@ class LDManager_Page(tk.Frame):
         tk.Label(self.device_list, text=device.name).grid(row=row, column=1)
         tk.Label(self.device_list, text=device.imei).grid(row=row, column=2)
         tk.Label(self.device_list, text=device.uuid).grid(row=row, column=3)
+        tk.Label(self.device_list, text=device.facebook).grid(row=row, column=4)
+        tk.Label(self.device_list, text="Active", fg="green").grid(row=row, column=5)
+        tk.Button(self.device_list, text="Kill", command=lambda: quit_ld(device)).grid(row=row, column=6)
+        tk.Button(self.device_list, text="Run", command=lambda: run_ld(device)).grid(row=row, column=7)
+        tk.Button(self.device_list, text="Remove", command=lambda: (remove_ld(device)
+                                                                    , self.refresh())).grid(row=row, column=8)
+        tk.Button(self.device_list, text="Reload", command=lambda: reboot_ld(device)).grid(row=row, column=9)
 
     def add_device(self, number):
         self.tasks.append(create_ld)
@@ -89,8 +95,8 @@ class LDManager_Page(tk.Frame):
 
             for task in get_task:
                 task()
-                self.refresh()
                 self.tasks.remove(task)
+                self.refresh()
 
     def remove_all(self):
         remove_all_ld()

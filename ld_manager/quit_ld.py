@@ -16,7 +16,7 @@ def quit_all():
 
 def quit_ld(device):
     try:
-        subprocess.run([LDCONSOLE_PATH] + ["quit", "--name", device], shell=True)
+        subprocess.run([LDCONSOLE_PATH] + ["quit", "--name", device.name], shell=True)
 
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
