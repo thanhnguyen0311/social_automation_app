@@ -45,23 +45,14 @@ class FBManager(tk.Toplevel):
             self.fb_accounts.insert("", "end",
                                     values=(item[0], item[1], item[2], item[3], item[4], "Click Me"))
 
-        # self.fb_accounts.bind("<<TreeviewSelect>>", self.on_select)
-        self.fb_accounts.bind("<Motion>", self.on_mouse_hover)
         self.fb_accounts.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
         self.protocol("WM_DELETE_WINDOW", lambda: self.destroy())
         self.hover_label = tk.Label(self, text="", pady=10)
         self.hover_label.pack()
-    # def on_select(self, event):
-    #     selected_row = self.fb_accounts.selection_get()
-    #     if selected_row:
-    #         values = self.fb_accounts.selection_own_get()
-    #         print(values)
-    #     print(selected_row)
 
-    def on_mouse_hover(self, event):
-        item = self.fb_accounts.identify_row(event.y)
-        if item:
-            values = self.fb_accounts.item(item, 'values')
-            self.hover_label.config(text=f"Hovered Row: {item}, Values: {values}")
-        else:
-            self.hover_label.config(text="")
+    def on_treeview_select(event):
+        selected_item = tree.selection()
+        if selected_item:
+            values = tree.item(selected_item, 'values')
+            print("Selected Row:", selected_item)
+            print("Values:", values)
