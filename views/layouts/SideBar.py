@@ -50,7 +50,7 @@ class SideBar(tk.Frame):
 
     def choose_popup(self, popup):
         if popup == FBManager:
-            if self.fb_service is None:
+            if self.fb_service is None or self.fb_service.is_open is False:
                 self.fb_service = FBManager(self)
             else:
                 return
