@@ -71,7 +71,7 @@ class LDManager_Page(tk.Frame):
         tk.Label(self.device_list, text=device.imei).grid(row=row, column=2)
         tk.Label(self.device_list, text=device.uuid).grid(row=row, column=3)
         tk.Label(self.device_list, text=device.facebook).grid(row=row, column=4)
-        tk.Label(self.device_list, text="Active", fg="green").grid(row=row, column=5)
+        tk.Label(self.device_list, text="• Active", fg="green").grid(row=row, column=5)
         tk.Button(self.device_list, text="Kill", command=lambda: quit_ld(device)).grid(row=row, column=6)
         tk.Button(self.device_list, text="Run", command=lambda: run_ld(device)).grid(row=row, column=7)
         tk.Button(self.device_list, text="Remove", command=lambda: (remove_ld(device)
