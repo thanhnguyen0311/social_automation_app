@@ -1,15 +1,13 @@
 from threading import Thread
-import queue
-import time
 import tkinter as tk
 
-from ld_manager.create_ld import create_ld
-from ld_manager.get_list_ld import get_list_ld
-from ld_manager.quit_ld import quit_all, quit_ld
-from ld_manager.reboot_ld import reboot_ld
-from ld_manager.remove_ld import remove_all_ld, remove_ld
-from ld_manager.run_ld import run_ld
-from ld_manager.sort_ld import sort_ld
+from src.ld_manager.create_ld import create_ld
+from src.ld_manager.get_list_ld import get_list_ld
+from src.ld_manager.quit_ld import quit_all, quit_ld
+from src.ld_manager.reboot_ld import reboot_ld
+from src.ld_manager.remove_ld import remove_all_ld, remove_ld
+from src.ld_manager.run_ld import run_ld
+from src.ld_manager.sort_ld import sort_ld
 
 
 class LDManager_Page(tk.Frame):

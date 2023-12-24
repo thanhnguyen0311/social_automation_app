@@ -1,8 +1,8 @@
 import subprocess
 import sys
 import os
-from constants.constants import LDCONSOLE_PATH
-from ld_manager.get_list_ld import get_list_ld
+from src.constants.constants import LDCONSOLE_PATH
+from src.ld_manager.get_list_ld import get_list_ld
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 

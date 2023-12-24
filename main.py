@@ -1,5 +1,6 @@
 import tkinter as tk
-from views.layouts.SideBar import SideBar
+
+from src.views.layouts.SideBar import SideBar
 
 
 class Login(tk.Tk):

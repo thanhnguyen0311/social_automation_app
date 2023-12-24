@@ -1,10 +1,10 @@
 import subprocess
-from constants.constants import LDPLAYER_PATH
+from src.constants.constants import LDPLAYER_PATH
 import sys
 import os
 
-from ld_manager.create_ld import open_file
-from models.device import Device
+from src.ld_manager.create_ld import open_file
+from src.models.Device import Device
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 

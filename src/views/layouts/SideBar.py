@@ -1,11 +1,13 @@
 import tkinter as tk
 
-from views.layouts.MainFrame import MainFrame
-from views.pages.FBManager import FBManager
-from views.pages.LDManager import LDManager_Page
-from views.pages.Setting import Setting
-from constants.constants import LOGO_PATH
-from utils.add_image import show_image
+from ttkbootstrap import Style
+
+from src.views.layouts.MainFrame import MainFrame
+from src.views.pages.FBManager import FBManager
+from src.views.pages.LDManager import LDManager_Page
+from src.views.pages.Setting import Setting
+from src.constants.constants import LOGO_PATH
+from src.utils.addImage import show_image
 
 
 def close_app(app):

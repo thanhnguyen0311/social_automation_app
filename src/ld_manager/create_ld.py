@@ -3,8 +3,8 @@ import shutil
 import sys
 import os
 import json
-from constants.constants import LDPLAYER_PATH, LDCONSOLE_PATH, CLONE_LD_DATA
-from models.device import Device
+from src.constants.constants import LDPLAYER_PATH, LDCONSOLE_PATH, CLONE_LD_DATA
+from src.models.Device import Device
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
