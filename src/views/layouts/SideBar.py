@@ -1,7 +1,5 @@
 import tkinter as tk
 
-from ttkbootstrap import Style
-
 from src.views.layouts.MainFrame import MainFrame
 from src.views.pages.FBManager import FBManager
 from src.views.pages.LDManager import LDManager_Page

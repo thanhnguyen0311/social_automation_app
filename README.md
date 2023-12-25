@@ -6,7 +6,7 @@ pip install mysql-connector-python<br><br><br>
 USE social_automation;
 
 CREATE TABLE IF NOT EXISTS devices (
-    device_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    device_id INT AUTO_INCREMENT PRIMARY KEY,
     imei VARCHAR(255),
     uuid VARCHAR(255),
     manufacturer VARCHAR(255),
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS devices (
     create_date DATETIME default now()
 );
 CREATE TABLE IF NOT EXISTS users (
-    user_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
     username VARCHAR(255),
     password VARCHAR(255),
@@ -32,12 +32,14 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS emails (
-    email_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    email_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(255),
     last_name VARCHAR(255),
     email_address VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    create_date DATETIME default now()
+    create_date DATETIME default now(),
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 
@@ -45,11 +47,10 @@ CREATE TABLE IF NOT EXISTS fb_accounts (
     fb_account_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(255),
     last_name VARCHAR(255),
-    email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
-    device_id BIGINT,
-    email_id BIGINT,
-    user_id BIGINT,
+    device_id INT,
+    email_id INT,
+    user_id INT default(0),
     last_login DATETIME,
     date DATETIME default now(),
     status VARCHAR(20) default('Registered'),
