@@ -62,15 +62,14 @@ def create_ld():
 
         new_ldplayer = Device(ID=i,
                               name=name_ld,
-                              imei=["propertySettings.phoneIMEI"],
+                              imei=contents["propertySettings.phoneIMEI"],
                               uuid=f"emulator-{str(5554 + (int(i) * 2))}",
-                              manufacturer=["propertySettings.phoneManufacturer"],
-                              model=["propertySettings.phoneModel"],
-                              imsi=["propertySettings.phoneIMSI"],
+                              manufacturer=contents["propertySettings.phoneManufacturer"],
+                              model=contents["propertySettings.phoneModel"],
+                              imsi=contents["propertySettings.phoneIMSI"],
                               androidId=contents["propertySettings.phoneAndroidId"],
-                              simSerial=["propertySettings.phoneSimSerial"],
-                              macAddress=["propertySettings.macAddress"],
-                              facebook=""
+                              simSerial=contents["propertySettings.phoneSimSerial"],
+                              macAddress=contents["propertySettings.macAddress"]
                               )
 
         config = {
@@ -101,7 +100,7 @@ def create_ld():
     return new_ldplayer
 
 
-def clone_ld(data):
+def clone_ld(device):
     try:
         id_list = []
         file_list = os.listdir(vms_path)
@@ -120,18 +119,23 @@ def clone_ld(data):
 
         subprocess.call([LDCONSOLE_PATH] + ["add"], shell=True)
 
+        source_data = os.path.join(LDPLAYER_PATH, "vms", "data.vmdk")
+        destination_data = os.path.join(LDPLAYER_PATH, "vms", f'leidian{str(i)}')
+        if CLONE_LD_DATA:
+            shutil.copy(source_data, destination_data)
+
         name_ld = f"LDPlayer-{str(i)}"
         if int(i) == 0:
             name_ld = "LDPlayer"
 
         contents = {
-            "propertySettings.phoneIMEI": data["IMEI"],
-            "propertySettings.phoneIMSI": data["IMSI"],
-            "propertySettings.phoneSimSerial": data["simSerial"],
-            "propertySettings.phoneAndroidId": data["androidId"],
-            "propertySettings.phoneModel": data["model"],
-            "propertySettings.phoneManufacturer": data["manufacturer"],
-            "propertySettings.macAddress": data["macAddress"]
+            "propertySettings.phoneIMEI": device.imei,
+            "propertySettings.phoneIMSI": device.imsi,
+            "propertySettings.phoneSimSerial": device.simSerial,
+            "propertySettings.phoneAndroidId": device.androidId,
+            "propertySettings.phoneModel": device.model,
+            "propertySettings.phoneManufacturer": device.manufacturer,
+            "propertySettings.macAddress": device.macAddress
         }
 
         config = {
@@ -153,15 +157,14 @@ def clone_ld(data):
 
         new_LDPlayer = Device(ID=str(i),
                               name=name_ld,
-                              imei=data["propertySettings.phoneIMEI"],
+                              imei=device.imei,
                               uuid=f"emulator-{str(5554 + (int(i) * 2))}",
-                              manufacturer=["propertySettings.phoneManufacturer"],
-                              model=["propertySettings.phoneModel"],
-                              imsi=["propertySettings.phoneIMSI"],
-                              androidId=["propertySettings.phoneAndroidId"],
-                              simSerial=data["propertySettings.phoneSimSerial"],
-                              macAddress=["propertySettings.macAddress"],
-                              facebook=["facebook"])
+                              manufacturer=device.manufacturer,
+                              model=device.model,
+                              imsi=device.imsi,
+                              androidId=device.androidId,
+                              simSerial=device.simSerial,
+                              macAddress=device.macAddress)
 
         # Merge 2 json data
         contents = {**contents, **config}

@@ -5,7 +5,7 @@ from src.views.pages.fb.FBManager import FBManager
 from src.views.pages.LDManager import LDManager_Page
 from src.views.pages.Setting import Setting
 from src.constants.constants import LOGO_PATH
-from src.utils.addImage import show_image
+from src.utils.imageUtils import show_image
 
 
 def close_app(app):

@@ -1,4 +1,6 @@
 from src.connection.mysqlConnection import connect_to_database
+from src.ld_manager.create_ld import clone_ld, create_ld
+from src.ld_manager.get_list_ld import get_list_ld
 from src.models.Device import Device
 
 
@@ -27,3 +29,24 @@ def find_device_by_id(device_id):
 
     except Exception as e:
         raise ConnectionError("Could not connect to database") from e
+
+
+def check_device_exists(device):
+    try:
+        if device:
+            list_device = get_list_ld()
+            for dvc in list_device:
+                if dvc.imei == device.imei:
+                    get_device = device
+                    get_device.name = dvc.name
+                    get_device.uuid = dvc.uuid
+                    return get_device
+            get_device = clone_ld(device)
+        else:
+            get_device = create_ld()
+
+        return get_device
+
+    except Exception as e:
+        print("Failed to clone device")
+        raise ConnectionError("Couldn't clone device") from e

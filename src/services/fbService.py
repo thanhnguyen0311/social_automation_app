@@ -46,3 +46,5 @@ def remove_fb_accounts(fb_account_id):
 
     except Exception as e:
         raise ConnectionError("Could not connect to database") from e
+
+

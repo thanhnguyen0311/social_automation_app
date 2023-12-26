@@ -50,8 +50,7 @@ def get_list_ld():
                             imsi=data["propertySettings.phoneIMSI"],
                             androidId=data["propertySettings.phoneAndroidId"],
                             simSerial=data["propertySettings.phoneSimSerial"],
-                            macAddress=data["propertySettings.macAddress"],
-                            facebook=data_fb)
+                            macAddress=data["propertySettings.macAddress"])
 
             ld_players.append(device)
 

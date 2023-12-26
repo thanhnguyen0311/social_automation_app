@@ -49,10 +49,8 @@ class LDManager_Page(tk.Frame):
         frame.imei_devices.grid(row=0, column=2, sticky="w", padx=40, pady=5)
         frame.uuid_devices = tk.Label(frame, text="UUID")
         frame.uuid_devices.grid(row=0, column=3, sticky="w", padx=40, pady=5)
-        frame.uuid_devices = tk.Label(frame, text="Facebook")
-        frame.uuid_devices.grid(row=0, column=4, sticky="w", padx=40, pady=5)
         frame.uuid_devices = tk.Label(frame, text="Status")
-        frame.uuid_devices.grid(row=0, column=5, sticky="w", padx=15, pady=5)
+        frame.uuid_devices.grid(row=0, column=4, sticky="w", padx=15, pady=5)
 
     def refresh(self):
         self.device_list.destroy()
@@ -68,13 +66,12 @@ class LDManager_Page(tk.Frame):
         tk.Label(self.device_list, text=device.name).grid(row=row, column=1)
         tk.Label(self.device_list, text=device.imei).grid(row=row, column=2)
         tk.Label(self.device_list, text=device.uuid).grid(row=row, column=3)
-        tk.Label(self.device_list, text=device.facebook).grid(row=row, column=4)
-        tk.Label(self.device_list, text="• Active", fg="green").grid(row=row, column=5)
-        tk.Button(self.device_list, text="Kill", command=lambda: quit_ld(device)).grid(row=row, column=6)
-        tk.Button(self.device_list, text="Run", command=lambda: run_ld(device)).grid(row=row, column=7)
+        tk.Label(self.device_list, text="• Active", fg="green").grid(row=row, column=4)
+        tk.Button(self.device_list, text="Kill", command=lambda: quit_ld(device)).grid(row=row, column=5)
+        tk.Button(self.device_list, text="Run", command=lambda: run_ld(device)).grid(row=row, column=6)
         tk.Button(self.device_list, text="Remove", command=lambda: (remove_ld(device)
-                                                                    , self.refresh())).grid(row=row, column=8)
-        tk.Button(self.device_list, text="Reload", command=lambda: reboot_ld(device)).grid(row=row, column=9)
+                                                                    , self.refresh())).grid(row=row, column=7)
+        tk.Button(self.device_list, text="Reload", command=lambda: reboot_ld(device)).grid(row=row, column=8)
 
     def add_device(self, number):
         self.tasks.append(create_ld)
