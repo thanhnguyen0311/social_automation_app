@@ -1,5 +1,6 @@
 import tkinter as tk
-from views.layouts.SideBar import SideBar
+
+from src.views.layouts.SideBar import SideBar
 
 
 class Login(tk.Tk):
@@ -11,8 +12,8 @@ class Login(tk.Tk):
 class HomePage(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("LDManager Tool")
-        self.geometry("1200x600")
+        self.title("Social Automation")
+        self.geometry("1000x600")
         SideBar(self)
 
 
