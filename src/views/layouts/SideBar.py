@@ -1,7 +1,7 @@
 import tkinter as tk
 
 from src.views.layouts.MainFrame import MainFrame
-from src.views.pages.FBManager import FBManager
+from src.views.pages.fb.FBManager import FBManager
 from src.views.pages.LDManager import LDManager_Page
 from src.views.pages.Setting import Setting
 from src.constants.constants import LOGO_PATH

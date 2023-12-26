@@ -1,10 +1,13 @@
+from datetime import datetime
+
+
 class Device:
-    def __init__(self, ID, name, uuid, imei="", manufacturer="", model="", imsi="", androidId="", simSerial="",
-                 macAddress="", facebook=""):
+    def __init__(self, ID, name="", uuid='', imei="", manufacturer="", model="", imsi="", androidId="", simSerial="",
+                 macAddress="", facebook="",  create_date=datetime.now()):
         self.ID = ID
         self.name = name
-        self.imei = imei
         self.uuid = uuid
+        self.imei = imei
         self.manufacturer = manufacturer
         self.model = model
         self.imsi = imsi
@@ -12,3 +15,4 @@ class Device:
         self.simSerial = simSerial
         self.macAddress = macAddress
         self.facebook = facebook
+        self.create_date = create_date
