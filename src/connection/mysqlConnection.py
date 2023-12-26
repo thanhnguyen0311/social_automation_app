@@ -12,14 +12,14 @@ def connect_to_database():
                                              database=account_data_config['database'])
 
         if connection.is_connected():
-            print('Connected to MySQL database')
-
-            cursor = connection.cursor()
-
-            cursor.execute('SELECT VERSION()')
-            db_version = cursor.fetchone()
-            print('MySQL Database Version:', db_version)
-            cursor.close()
+            # print('Connected to MySQL database')
+            #
+            # cursor = connection.cursor()
+            #
+            # cursor.execute('SELECT VERSION()')
+            # db_version = cursor.fetchone()
+            # # print('MySQL Database Version:', db_version)
+            # cursor.close()
             return connection
     except mysql.connector.Error as err:
         connection.close()

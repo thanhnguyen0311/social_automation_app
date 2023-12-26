@@ -13,7 +13,7 @@ class FBAccount:
                  facebook_account_id=None,
                  device=None,
                  last_login=None,
-                 status="Registered",
+                 status="New",
                  is_deleted=False,
                  create_date=datetime.now()):
         self.facebook_account_id = facebook_account_id
@@ -28,7 +28,10 @@ class FBAccount:
         self.create_date = create_date
 
     def __str__(self):
-        return f'FB_account{self.first_name} {self.last_name} {str(self.email)} {self.password}'
+        return (f'FB_account{self.facebook_account_id} '
+                f'{self.first_name} {self.last_name} '
+                f'{str(self.email)} {self.password} '
+                f'{self.status} {self.is_deleted} {self.last_login} {self.create_date}')
 
     @property
     def first_name(self):
@@ -36,7 +39,7 @@ class FBAccount:
 
     @first_name.setter
     def first_name(self, value):
-        if 3 <= len(value) <= 10 and not any(char.isdigit() for char in value):
+        if 2 <= len(value) <= 10 and not any(char.isdigit() for char in value):
             self.__first_name = value
         else:
             raise ValueError(f'Invalid first name: {value}')
@@ -47,7 +50,7 @@ class FBAccount:
 
     @last_name.setter
     def last_name(self, value):
-        if 3 <= len(value) <= 10 and not any(char.isdigit() for char in value):
+        if 2 <= len(value) <= 10 and not any(char.isdigit() for char in value):
             self.__last_name = value
         else:
             raise ValueError(f'Invalid last name: {value}')
