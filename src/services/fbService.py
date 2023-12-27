@@ -2,17 +2,18 @@ from src.connection.mysqlConnection import connect_to_database
 from src.models.Facebook import FBAccount
 from src.services.deviceService import find_device_by_id
 from src.services.emailService import find_email_by_id
+from datetime import datetime
 
 
 def get_all_fb_accounts(user_id):
     try:
-        connect = connect_to_database()
-        cursor = connect.cursor(dictionary=True)
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
         query = "SELECT * FROM fb_accounts where user_id = %s and is_deleted = False"
         cursor.execute(query, (user_id,))
         result = cursor.fetchall()
         cursor.close()
-        connect.close()
+        connection.close()
         fb_accounts = {}
         for row in result:
             fb_accounts[row['fb_id']] = FBAccount(facebook_account_id=row['fb_id'],
@@ -35,13 +36,28 @@ def get_all_fb_accounts(user_id):
 
 def remove_fb_accounts(fb_account_id):
     try:
-        connect = connect_to_database()
-        cursor = connect.cursor(dictionary=True)
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
         alter_query = "UPDATE fb_accounts SET is_deleted = 1 WHERE fb_id = %s"
         cursor.execute(alter_query, (fb_account_id,))
-        connect.commit()
+        connection.commit()
         cursor.close()
-        connect.close()
+        connection.close()
+        return True
+
+    except Exception as e:
+        raise ConnectionError("Could not connect to database") from e
+
+
+def update_last_login(fb_account_id):
+    try:
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
+        alter_query = "UPDATE fb_accounts SET last_login = %s WHERE fb_id = %s"
+        cursor.execute(alter_query, (datetime.now(), fb_account_id,))
+        connection.commit()
+        cursor.close()
+        connection.close()
         return True
 
     except Exception as e:

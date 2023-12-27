@@ -68,21 +68,26 @@ class FBAccount:
             raise ValueError(f'Invalid password: {value}')
 
     def save(self):
-        connection = connect_to_database()
-        cursor = connection.cursor()
+        try:
+            connection = connect_to_database()
+            cursor = connection.cursor()
 
-        email_id = self.email.save()
-        select_query = "SELECT * FROM fb_accounts WHERE email_id = %s"
-        cursor.execute(select_query, (email_id,))
-        result = cursor.fetchone()
+            email_id = self.email.save()
+            select_query = "SELECT * FROM fb_accounts WHERE email_id = %s"
+            cursor.execute(select_query, (email_id,))
+            result = cursor.fetchone()
 
-        if result:
-            raise ValueError("Email already registered")
+            if result:
+                raise ValueError("Email already registered")
 
-        else:
-            insert_query = "INSERT INTO fb_accounts (first_name, last_name, password, email_id) VALUES (%s, %s, %s, %s)"
-            cursor.execute(insert_query, (self.first_name, self.last_name, self.password, email_id))
+            else:
+                insert_query = "INSERT INTO fb_accounts (first_name, last_name, password, email_id) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_query,
+                               (self.first_name, self.last_name, self.password,
+                                email_id))
 
-        connection.commit()
-        cursor.close()
-        connection.close()
+            connection.commit()
+            cursor.close()
+            connection.close()
+        except Exception as e:
+            raise ConnectionError("Could not connect to database") from e

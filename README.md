@@ -4,6 +4,7 @@ pip install appium-python-client==2.1.4<br>
 pip install requests<br>
 pip install pyautogui<br>
 pip install pygetwindow<br>
+pip install selenium Pillow<br>
 pip install mysql-connector-python<br><br><br>
 
 USE social_automation;

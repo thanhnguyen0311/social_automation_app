@@ -64,7 +64,6 @@ class FBManager(tk.Toplevel):
         list_account = self.fb_account_list.get_selected()
         if selected_option == TaskEnum.LOGIN.value:
             for account in list_account:
-                print(account.facebook_account_id)
                 login_facebook(account)
 
     def choose_popup(self, popup):

@@ -1,6 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 import base64
+from io import BytesIO
 
 
 def RBGAImage(path):
@@ -30,5 +31,12 @@ def encode_image_to_base64(image_path):
         return encoded_image.decode("utf-8")
 
 
-def find_image_from_image():
-    return
+def capture_checkpoint(driver, crop_region):
+    screenshot_base64 = driver.get_screenshot_as_base64()
+    screenshot_bytes = base64.b64decode(screenshot_base64)
+    screenshot = Image.open(BytesIO(screenshot_bytes))
+    cropped_image = screenshot.crop(crop_region)
+    cropped_image_bytes_io = BytesIO()
+    cropped_image.save(cropped_image_bytes_io, format='PNG')
+    cropped_image_base64 = base64.b64encode(cropped_image_bytes_io.getvalue()).decode('utf-8')
+    return cropped_image_base64
