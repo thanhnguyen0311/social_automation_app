@@ -3,7 +3,6 @@ from PIL import ImageTk, Image, ImageChops
 import base64
 from io import BytesIO
 import numpy as np
-from skimage.metrics import structural_similarity as ssim
 
 
 def RBGAImage(path):
@@ -43,30 +42,3 @@ def capture_checkpoint(driver, crop_region):
     cropped_image_base64 = base64.b64encode(cropped_image_bytes_io.getvalue()).decode('utf-8')
     return cropped_image_base64
 
-
-# def match_2_images(image1, image2):
-#     image1_bytes = base64.b64decode(image1)
-#     image2_bytes = base64.b64decode(image2)
-#
-#     image1 = Image.open(BytesIO(image1_bytes))
-#     image2 = Image.open(BytesIO(image2_bytes))
-#
-#     array1 = np.array(image1)
-#     array2 = np.array(image2)
-#
-#     if len(array1.shape) == 3:
-#         array1 = np.mean(array1, axis=-1)
-#     if len(array2.shape) == 3:
-#         array2 = np.mean(array2, axis=-1)
-#
-#     # Calculate the Structural Similarity Index (SSI)
-#     ssi_index, _ = ssim(array1, array2, full=True)
-#
-#     # Set a threshold for similarity
-#     similarity_threshold = 0.80
-#
-#     # Print the result
-#     if ssi_index >= similarity_threshold:
-#         return True
-#     else:
-#         return False

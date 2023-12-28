@@ -5,6 +5,7 @@ pip install requests<br>
 pip install pyautogui<br>
 pip install pygetwindow<br>
 pip install selenium Pillow<br>
+pip install pytesseract<br>
 pip install mysql-connector-python<br><br><br>
 
 USE social_automation;
@@ -14,7 +15,7 @@ CREATE TABLE IF NOT EXISTS devices (
     imei VARCHAR(255),
     uuid VARCHAR(255),
     manufacturer VARCHAR(255),
-    model VARCHAR(255),
+    model VARCHAR(255),*
     imsi VARCHAR(255),
     android_id VARCHAR(255),
     sim_serial VARCHAR(255),
