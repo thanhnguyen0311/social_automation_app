@@ -1,8 +1,15 @@
+
+from PIL import ImageTk, Image, ImageChops
+import base64
+from io import BytesIO
 from appium import webdriver
 import time
+import pytesseract
 
 from selenium.common.exceptions import WebDriverException
+from urllib3.exceptions import MaxRetryError
 
+from src.constants.constants import pytesseract_PATH
 from src.enum.checkpoints import LoginEnum
 from src.ld_manager.is_running import is_running
 from src.ld_manager.reboot_ld import reboot_ld
@@ -18,7 +25,7 @@ def login_facebook(data):
         run_ld(data.device)
 
     while True:
-        time.sleep(15)
+        time.sleep(10)
 
         desired_cap = {
             "uuid": data.device.uuid,
@@ -34,64 +41,89 @@ def login_facebook(data):
             element = driver.find_element_by_xpath('//android.widget.TextView[@content-desc="Facebook"]')
             element.click()
 
-            time.sleep(5)
+            time.sleep(15)
 
-            checkpoint = capture_checkpoint(driver, (400, 55, 600, 130))
-            if LoginEnum.LOGIN_SUCCESS.value == checkpoint:
-                update_last_login(data.facebook_account_id)
-                print("Login successful.")
-                return driver
+            pytesseract.pytesseract.tesseract_cmd = pytesseract_PATH
 
-            element = driver.find_element_by_xpath(
-                '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
-            element.click()
+            screenshot_base64 = driver.get_screenshot_as_base64()
+            screenshot_bytes = base64.b64decode(screenshot_base64)
+            screenshot = Image.open(BytesIO(screenshot_bytes))
+            text = pytesseract.image_to_string(screenshot)
 
-            element.send_keys(data.email.email_address)
-
-            element = driver.find_element_by_xpath(
-                '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
-            element.click()
-
-            element.send_keys(data.password)
-
-            checkpoint = capture_checkpoint(driver, (200, 700, 520, 930))
-            while LoginEnum.LOGIN_BUTTON.value == checkpoint:
-                element = driver.find_element_by_xpath('//android.view.View[@content-desc="Log in"]')
-                element.click()
-                time.sleep(1)
-                checkpoint = capture_checkpoint(driver, (200, 700, 520, 930))
-
-            checkpoint = capture_checkpoint(driver, (200, 55, 520, 130))
-            while LoginEnum.WAIT_LOGIN.value == checkpoint:
-                checkpoint = capture_checkpoint(driver, (200, 55, 520, 130))
-                time.sleep(1)
-
-            checkpoint = capture_checkpoint(driver, (200, 55, 520, 130))
-            if LoginEnum.ACCESS_TO_CONTACT.value == checkpoint:
-                reboot_ld(data.device)
-                continue
-
-            element = driver.find_element_by_xpath(
-                    '//android.view.ViewGroup[@content-desc="Allow"]')
-            element.click()
-
-            element = driver.find_element_by_xpath(
-                    '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]')
-            element.click()
-
-            element = driver.find_element_by_xpath(
-                    '//android.widget.Button[@content-desc="Save"]/android.view.ViewGroup')
-            element.click()
-
-            if LoginEnum.LOGIN_SUCCESS == checkpoint:
-                update_last_login(data.facebook_account_id)
-                print("Login successful.")
-                return driver
-
+            print(text.strip())
+            index = text.find("Forgot password")
+            if index != -1:
+                print(f"Text found at index {index}")
             else:
-                print("Login Failed.")
-                return False
+                print("Text not found")
+            return
+            # checkpoint = capture_checkpoint(driver, (400, 55, 600, 130))
+            # print(checkpoint)
+            #
+            # if LoginEnum.LOGIN_SUCCESS.value == checkpoint:
+            #     update_last_login(data.facebook_account_id)
+            #     print("Login successful.")
+            #     return driver
+            #
+            # else:
+            #
+            #     element = driver.find_element_by_xpath(
+            #         '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
+            #     element.click()
+            #
+            #     element.send_keys(data.email.email_address)
+            #
+            #     element = driver.find_element_by_xpath(
+            #         '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
+            #     element.click()
+            #
+            #     element.send_keys(data.password)
+            #
+            #     checkpoint = capture_checkpoint(driver, (200, 730, 520, 930))
+            #     print(checkpoint)
+            #     while LoginEnum.LOGIN_BUTTON.value == checkpoint:
+            #         element = driver.find_element_by_xpath('//android.view.View[@content-desc="Log in"]')
+            #         element.click()
+            #         time.sleep(2)
+            #         checkpoint = capture_checkpoint(driver, (200, 700, 520, 930))
+            #
+            #     checkpoint = capture_checkpoint(driver, (200, 55, 520, 130))
+            #     print(checkpoint)
+            #     while LoginEnum.WAIT_LOGIN.value == checkpoint:
+            #         time.sleep(2)
+            #         checkpoint = capture_checkpoint(driver, (200, 55, 520, 130))
+            #
+            #     checkpoint = capture_checkpoint(driver, (200, 55, 520, 130))
+            #     time.sleep(2)
+            #     if LoginEnum.ACCESS_TO_CONTACT.value == checkpoint:
+            #         reboot_ld(data.device)
+            #         continue
+            #
+            # element = driver.find_element_by_xpath('//android.view.ViewGroup[@content-desc="Allow"]')
+            # element.click()
+            #
+            # element = driver.find_element_by_xpath(
+            #     '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]')
+            # element.click()
+            #
+            # element = driver.find_element_by_xpath(
+            #     '//android.widget.Button[@content-desc="Save"]/android.view.ViewGroup')
+            # element.click()
+            # time.sleep(3)
+            #
+            # if LoginEnum.LOGIN_SUCCESS.value == checkpoint:
+            #     update_last_login(data.facebook_account_id)
+            #     print("Login successful.")
+            #     return driver
+            #
+            # else:
+            #     print("Login Failed.")
+            #     return False
 
-        except WebDriverException:
+        except MaxRetryError:
+            continue
+
+        except WebDriverException as e:
+            print(f"Error: {e}")
             reboot_ld(data.device)
             continue
