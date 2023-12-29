@@ -64,3 +64,15 @@ def update_last_login(fb_account_id):
         raise ConnectionError("Could not connect to database") from e
 
 
+def update_account_status(fb_account_id, status):
+    try:
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
+        alter_query = "UPDATE fb_accounts SET status = %s WHERE fb_id = %s"
+        cursor.execute(alter_query, (status, fb_account_id,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+    except Exception as e:
+        raise ConnectionError("Could not connect to database") from e

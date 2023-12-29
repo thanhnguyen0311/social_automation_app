@@ -82,7 +82,7 @@ class FBAccountsList(ttk.Treeview):
                         values=(account.facebook_account_id,
                                 account.first_name + " " + account.last_name,
                                 account.email.email_address,
-                                account.password,
+                                "*************",
                                 device_imei,
                                 account.last_login,
                                 account.create_date,
@@ -93,6 +93,16 @@ class FBAccountsList(ttk.Treeview):
             if account.status == "ALIVE":
                 bold_font = font.Font(family="Arial", size=8, weight="bold")
                 account.status = tk.Label(self, text="LIVE", bg='white', fg='green', font=bold_font)
+                account.status.place(x=x, y=y, width=width, height=height)
+
+            if account.status == "CHECKPOINT":
+                bold_font = font.Font(family="Arial", size=8, weight="bold")
+                account.status = tk.Label(self, text="CHECKPOINT", bg='white', fg='red', font=bold_font)
+                account.status.place(x=x, y=y, width=width, height=height)
+
+            if account.status == "DIE":
+                bold_font = font.Font(family="Arial", size=8, weight="bold")
+                account.status = tk.Label(self, text="CHECKPOINT", bg='white', fg='black', font=bold_font)
                 account.status.place(x=x, y=y, width=width, height=height)
 
     def show_device_hint(self, event, account):

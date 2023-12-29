@@ -13,10 +13,13 @@ def check_device_exists(data):
                     get_device = data.device
                     get_device.name = dvc.name
                     get_device.uuid = dvc.uuid
+                    get_device.created = False
                     return get_device
             get_device = clone_ld(data.device)
+            get_device.created = True
         else:
             get_device = create_ld()
+            get_device.created = True
             add_device_to_facebook(data.facebook_account_id, get_device)
 
         return get_device
@@ -72,3 +75,4 @@ def add_device_to_facebook(fb_account_id, device):
 
     except Exception as e:
         raise ConnectionError("Could not connect to database") from e
+

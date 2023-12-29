@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-
 from src.enum.taskEnum import TaskEnum
 from src.remote.facebook.login import login_facebook
 from src.views.pages.fb.AccountsTree import FBAccountsList
@@ -8,11 +7,12 @@ from src.views.pages.fb.AddPopup import AddFacebookAccount
 
 
 class FBManager(tk.Toplevel):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, master, *args, **kwargs):
         tk.Toplevel.__init__(self, *args, **kwargs, bg='lightblue')
         self.title("Facebook Service")
         self.geometry("1200x600")
         self.is_open = True
+        self.server = master.server
         self.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
         self.fb_account_list = FBAccountsList(self)
         self.add_fb_popup = None
@@ -72,5 +72,4 @@ class FBManager(tk.Toplevel):
                 self.add_fb_popup = AddFacebookAccount(self)
             else:
                 return
-
 

@@ -13,7 +13,6 @@ import subprocess
 
 def text_to_keycodes(text, driver):
     for char in text:
-        print(ord(char))
         if (58 > ord(char) > 47):
             keycode = ord(char) + 96
             driver.press_keycode(keycode)
@@ -335,7 +334,6 @@ def registerFacebook(userData):
         original_checkpoint2 = Image.open("./img/email-validate2.png")
         original_checkpoint2 = base64.b64encode(original_checkpoint2.tobytes()).decode('utf-8')
         if (original_checkpoint == scope_checkpoint or original_checkpoint2 == scope_checkpoint):
-
             driver.quit()
 
         else:

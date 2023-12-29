@@ -61,8 +61,7 @@ class FBAccount:
 
     @password.setter
     def password(self, value):
-        pattern = r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*_=+-]).{8,}$'
-        if re.fullmatch(pattern, value):
+        if 8 <= len(value):
             self.__password = value
         else:
             raise ValueError(f'Invalid password: {value}')
