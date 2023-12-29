@@ -86,6 +86,9 @@ def login_facebook(data):
 
 def pass_login_checkpoint(driver, data):
     while True:
+
+        time.sleep(3)
+
         if find_text_in_screenshot(driver, "Something went wrong"):
             driver.find_element_by_xpath(
                 '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]').click()
@@ -99,44 +102,37 @@ def pass_login_checkpoint(driver, data):
         if find_text_in_screenshot(driver, "Continue in English"):
             element = driver.find_element_by_xpath('//android.view.ViewGroup[@content-desc="Continue in English (US)"]')
             element.click()
-            time.sleep(3)
             continue
 
         if find_text_in_screenshot(driver, "Add email"):
             element = driver.find_element_by_xpath(
                 '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView[3]')
             element.click()
-            time.sleep(3)
             continue
 
         if find_text_in_screenshot(driver, "Add number"):
             element = driver.find_element_by_xpath(
                 '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView[3]')
             element.click()
-            time.sleep(3)
             continue
 
         if find_text_in_screenshot(driver, "Access to contacts"):
             element = driver.find_element_by_xpath(
                 '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[2]/android.view.ViewGroup')
             element.click()
-            time.sleep(3)
             continue
 
         if find_text_in_screenshot(driver, "Facebook uses this"):
             element = driver.find_element_by_xpath('//android.view.ViewGroup[@content-desc="Allow"]')
             element.click()
-            time.sleep(3)
             element = driver.find_element_by_xpath(
                 '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]')
             element.click()
-            time.sleep(3)
             continue
 
         if find_text_in_screenshot(driver, "save the login"):
             element = driver.find_element_by_xpath('//android.view.View[@content-desc="Save"]')
             element.click()
-            time.sleep(3)
             continue
 
         break
