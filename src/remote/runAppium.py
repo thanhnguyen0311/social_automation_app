@@ -1,9 +1,7 @@
-import base64
 import time
 import subprocess
 import pyautogui as pag
 import pygetwindow as gw
-import os
 
 
 def perform_action_with_appium():

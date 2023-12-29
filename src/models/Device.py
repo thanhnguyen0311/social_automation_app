@@ -3,7 +3,7 @@ from datetime import datetime
 
 class Device:
     def __init__(self, ID, name="", uuid='', imei="", manufacturer="", model="", imsi="", androidId="", simSerial="",
-                 macAddress="",  create_date=datetime.now()):
+                 macAddress="",  create_date=""):
         self.ID = ID
         self.name = name
         self.uuid = uuid

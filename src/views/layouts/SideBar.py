@@ -8,17 +8,19 @@ from src.constants.constants import LOGO_PATH
 from src.utils.imageUtils import show_image
 
 
-def close_app(app):
+def close_app(app, server):
+    server.stop()
     app.destroy()
 
 
 class SideBar(tk.Frame):
-    def __init__(self, master, bg='lightblue'):
+    def __init__(self, master, server, bg='lightblue'):
         super().__init__(master, bg=bg)
         self.pack(side=tk.LEFT, fill=tk.Y)
         self.pack_propagate(False)
         self.configure(width=150)
         self.fb_service = None
+        self.server = server
         self.main_frame = MainFrame(LDManager_Page)
         self.main_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.border = tk.Label(self, borderwidth=1, relief='solid', padx=0)
@@ -40,7 +42,7 @@ class SideBar(tk.Frame):
         self.button_setting.pack(padx=5, pady=5)
 
         self.button_exit = tk.Button(self, text="Exit", width=150, height=2,
-                                     command=lambda: close_app(master))
+                                     command=lambda: close_app(master, self.server))
         self.button_exit.pack(padx=5, pady=20, side=tk.BOTTOM)
 
     def choose_page(self, page):

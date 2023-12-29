@@ -35,21 +35,24 @@ class EmailAccount:
             raise ValueError(f'Invalid email address: {value}')
 
     def save(self):
-        connection = connect_to_database()
-        cursor = connection.cursor()
-        select_query = "SELECT * FROM emails WHERE email_address = %s"
-        cursor.execute(select_query, (self.email_address,))
-        result = cursor.fetchone()
+        try:
+            connection = connect_to_database()
+            cursor = connection.cursor()
+            select_query = "SELECT * FROM emails WHERE email_address = %s"
+            cursor.execute(select_query, (self.email_address,))
+            result = cursor.fetchone()
 
-        if result:
-            email_id = result[0]
+            if result:
+                email_id = result[0]
 
-        else:
-            insert_query = "INSERT INTO emails (first_name, last_name, email_address, password) VALUES (%s, %s, %s, %s)"
-            cursor.execute(insert_query, (self.first_name, self.last_name, self.email_address, self.password))
-            email_id = cursor.lastrowid
+            else:
+                insert_query = "INSERT INTO emails (first_name, last_name, email_address, password) VALUES (%s, %s, %s, %s)"
+                cursor.execute(insert_query, (self.first_name, self.last_name, self.email_address, self.password))
+                email_id = cursor.lastrowid
 
-        connection.commit()
-        cursor.close()
-        connection.close()
-        return email_id
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return email_id
+        except Exception as e:
+            raise ConnectionError("Could not connect to database") from e
