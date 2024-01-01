@@ -60,7 +60,7 @@ class FBManager(tk.Toplevel):
         self.option_farm = tk.StringVar()
         self.option_farm.set(FarmEnum.NO_ACTION.value)
         option_farm_menu = ttk.Combobox(button_frame,
-                                        textvariable=self.option,
+                                        textvariable=self.option_farm,
                                         values=[option.value for option in FarmEnum])
         option_farm_menu.grid(row=2, column=0, columnspan=2,
                               padx=5, pady=10, sticky=tk.NSEW)

@@ -25,7 +25,7 @@ def login_facebook(data):
                 time.sleep(20)
 
         desired_cap = {
-            "uuid": data.device.uuid,
+            "udid": data.device.uuid,
             "platformName": "Android",
             "appPackage": "com.ldmnq.launcher3",
             "appActivity": "com.android.launcher3.Launcher"
