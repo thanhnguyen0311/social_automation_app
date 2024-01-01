@@ -74,9 +74,8 @@ def login_facebook(data):
 
 def pass_login_checkpoint(driver, data):
     while True:
-
         time.sleep(3)
-        if find_text_in_screenshot(driver, "Check your notifications"):
+        if find_text_in_screenshot(driver, "Try another way"):
             driver.find_element_by_xpath(
                 '//android.widget.Button[@content-desc="Try another way"]/android.view.ViewGroup').click()
             driver.find_element_by_xpath(
