@@ -15,14 +15,14 @@ from src.utils.imageUtils import capture_checkpoint
 
 
 def login_facebook(data):
-    data.device = check_device_exists(data)
+    # data.device = check_device_exists(data)
 
     while True:
-        if is_running(data.device) is False:
-            run_ld(data.device)
-            time.sleep(20)
-            if data.device.created:
-                time.sleep(20)
+        # if is_running(data.device) is False:
+        #     run_ld(data.device)
+        #     time.sleep(20)
+        #     if data.device.created:
+        #         time.sleep(20)
 
         desired_cap = {
             "udid": data.device.uuid,
@@ -81,7 +81,7 @@ def login_facebook(data):
 
         except WebDriverException as e:
             print(f"Error: {e}")
-            quit_ld(data.device)
+            # quit_ld(data.device)
             continue
 
 
