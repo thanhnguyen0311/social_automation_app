@@ -82,10 +82,12 @@ def pass_login_checkpoint(driver, data):
                 find_text_in_screenshot(driver, "Waiting for approval")):
             driver.find_element(By.XPATH, '//android.view.View[@content-desc="Try another way"]').click()
             driver.find_element(By.XPATH, '//android.widget.RadioButton[@content-desc="Authentication app, Get a code from the app you set up."]').click()
+            driver.find_element(By.XPATH, '//android.widget.Button[@content-desc="Continue"]/android.view.ViewGroup').click()
             element = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
             element.click()
             element.send_keys(get_2fa_code(data.auth_2fa))
-            driver.find_element(By.XPATH, '//android.view.View[@content-desc="Continue"]').click()
+            
+            driver.find_element(By.XPATH, '//android.widget.Button[@content-desc="Continue"]/android.view.ViewGroup').click()
 
         if find_text_in_screenshot(driver, "Turn on contact uploading"):
             driver.find_element(By.XPATH, '//android.view.ViewGroup[@content-desc="Not now"]').click()
