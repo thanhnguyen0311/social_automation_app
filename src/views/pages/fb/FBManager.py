@@ -81,13 +81,14 @@ class FBManager(tk.Toplevel):
 
     def on_option_selected(self):
         selected_option = self.option.get()
+        selected_farm = self.option_farm.get()
         list_account = self.fb_account_list.get_selected()
         if selected_option == TaskEnum.LOGIN.value:
             for account in list_account:
                 account.thread = threading.Thread(target=login_facebook, args=(account,))
                 account.thread.start()
                 time.sleep(3)
-        if selected_option == FarmEnum.NEW_FEED.value:
+        if selected_farm == FarmEnum.NEW_FEED.value:
             for account in list_account:
                 account.thread = threading.Thread(target=farm_newFeed, args=(account,))
                 account.thread.start()
