@@ -62,7 +62,9 @@ def add_device_to_facebook(fb_account_id, device):
         cursor = connection.cursor(dictionary=True)
         insert_query = "INSERT INTO devices (imei, manufacturer, model, imsi, android_id, sim_serial, mac_address) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         cursor.execute(insert_query, (
-            device.imei, device.manufacturer, device.model, device.imsi, device.androidId, device.simSerial,
+            device.imei, device.manufacturer,
+            device.model, device.imsi,
+            device.androidId, device.simSerial,
             device.macAddress))
         device_id = cursor.lastrowid
 

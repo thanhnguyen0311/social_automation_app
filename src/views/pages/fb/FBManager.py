@@ -27,16 +27,19 @@ class FBManager(tk.Toplevel):
 
         button_frame = tk.Frame(self, bg='lightblue')
         button_frame.pack(padx=5, pady=20, anchor=tk.NW)
+
         button_add = tk.Button(button_frame,
                                text="ADD",
                                width=10, height=1,
                                command=lambda: self.choose_popup(AddFacebookAccount))
         button_add.grid(row=0, column=0, padx=5)
+
         button_refresh = tk.Button(button_frame,
                                    text="REFRESH",
                                    width=10, height=1,
                                    command=lambda: self.fb_account_list.on_refresh_clicked())
         button_refresh.grid(row=0, column=1, padx=5)
+
         button_remove = tk.Button(button_frame,
                                   text="REMOVE",
                                   width=10, height=1,

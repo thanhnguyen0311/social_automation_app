@@ -19,6 +19,7 @@ class FBAccount:
                  cookie="",
                  token="",
                  uid="",
+                 auth_2fa="",
                  clone_target_uid=""):
         self.facebook_account_id = facebook_account_id
         self.first_name = first_name
@@ -29,6 +30,7 @@ class FBAccount:
         self.last_login = last_login
         self.status = status
         self.cookie = cookie
+        self.auth_2fa = auth_2fa
         self.token = token
         self.uid = uid
         self.clone_target_uid = clone_target_uid
@@ -74,24 +76,19 @@ class FBAccount:
         else:
             raise ValueError(f'Invalid password: {value}')
 
-    def save(self):
+    def save(self, email_address=None):
         try:
             connection = connect_to_database()
             cursor = connection.cursor()
-
-            email_id = self.email.save()
-            select_query = "SELECT * FROM fb_accounts WHERE email_id = %s"
-            cursor.execute(select_query, (email_id,))
+            select_query = "SELECT * FROM emails WHERE email_address = %s"
+            cursor.execute(select_query, (email_address,))
             result = cursor.fetchone()
 
             if result:
-                raise ValueError("Email already registered")
-
-            else:
-                insert_query = "INSERT INTO fb_accounts (first_name, last_name, password, email_id) VALUES (%s, %s, %s, %s)"
+                email_id = result[0]
+                insert_query = "INSERT INTO fb_accounts (first_name, last_name, password, email_id, cookie, token, uid, auth_2fa) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(insert_query,
-                               (self.first_name, self.last_name, self.password,
-                                email_id))
+                               (self.first_name, self.last_name, self.password, email_id, self.cookie, self.token, self.uid, self.auth_2fa))
 
             connection.commit()
             cursor.close()
