@@ -15,7 +15,7 @@ from src.utils.imageUtils import capture_checkpoint
 
 
 def login_facebook(data):
-    data.device = check_device_exists(data)
+    # data.device = check_device_exists(data)
 
     while True:
         if is_running(data.device) is False:

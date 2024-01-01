@@ -5,6 +5,7 @@ from tkinter import ttk
 
 from src.enum.farmEnum import FarmEnum
 from src.enum.taskEnum import TaskEnum
+from src.ld_manager.run_ld import run_list_ld
 from src.remote.facebook.farm.newfeed import farm_newFeed
 from src.remote.facebook.login import login_facebook
 from src.views.pages.fb.AccountsTree import FBAccountsList
@@ -81,13 +82,18 @@ class FBManager(tk.Toplevel):
 
     def on_option_selected(self):
         selected_option = self.option.get()
+        selected_farm_option = self.option_farm.get()
         list_account = self.fb_account_list.get_selected()
+
+        list_account = run_list_ld(list_account)
+
         if selected_option == TaskEnum.LOGIN.value:
             for account in list_account:
                 account.thread = threading.Thread(target=login_facebook, args=(account,))
                 account.thread.start()
                 time.sleep(3)
-        if selected_option == FarmEnum.NEW_FEED.value:
+
+        if selected_farm_option == FarmEnum.NEW_FEED.value:
             for account in list_account:
                 account.thread = threading.Thread(target=farm_newFeed, args=(account,))
                 account.thread.start()
