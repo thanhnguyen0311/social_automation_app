@@ -1,8 +1,9 @@
-import queue
 import tkinter as tk
+import asyncio
 
-from src.services.socketService import SocketServer
+from src.services.socketService import SocketClient
 from src.views.layouts.SideBar import SideBar
+from src.constants.constants import SERVER_SOCKET
 
 
 class Login(tk.Tk):
@@ -11,20 +12,24 @@ class Login(tk.Tk):
 
 
 class HomePage(tk.Tk):
-    def __init__(self, server):
+    def __init__(self):
         super().__init__()
         self.title("Social Automation")
-        self.server = server
-        self.geometry("1000x600")
-        SideBar(self, self.server)
+        self.geometry("1200x600")
+        # self.websocket_client = SocketClient(SERVER_SOCKET, self.display_message)
+        self.websocket_client = None
+        SideBar(self, self.websocket_client)
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def display_message(self, message):
+        print(message)
+
+    def on_close(self):
+        # asyncio.get_event_loop().run_until_complete(self.websocket_client.close())
+        # self.websocket_client.websocket_thread.join()
+        self.destroy()
 
 
 if __name__ == '__main__':
-    socket_server = SocketServer('0.0.0.0', 7070, queue.Queue())
-    app = HomePage(socket_server)
-    try:
-        app.mainloop()
-    finally:
-        # Stop the server when done
-        socket_server.stop()
-        print("Socket Closed")
+    app = HomePage()
+    app.mainloop()

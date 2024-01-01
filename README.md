@@ -45,7 +45,14 @@ CREATE TABLE IF NOT EXISTS emails (
     password VARCHAR(255) NOT NULL,
     create_date DATETIME default now(),
     user_id BIGINT default(1),
-    FOREIGN KEY (user_id) REFERENCES `users`(user_id)
+	device_id BIGINT,
+	status VARCHAR(20) default('ALIVE'),
+	is_deleted bit(1) default(0),
+	facebook bit(1) default(0),
+	tiktok bit(1) default(0),
+	telegram bit(1) default(0),
+    FOREIGN KEY (user_id) REFERENCES `users`(user_id),
+	FOREIGN KEY (device_id) REFERENCES devices(device_id);
 );
 
 
@@ -61,6 +68,10 @@ CREATE TABLE IF NOT EXISTS fb_accounts (
     date DATETIME default now(),
     status VARCHAR(20) default('uncheck'),
     is_deleted BIT default(0),
+    token VARCHAR(255),
+    uid VARCHAR(255),
+    cookie VARCHAR(255),
+    clone_target_uid VARCHAR(255),
     FOREIGN KEY (device_id) REFERENCES devices(device_id),
     FOREIGN KEY (user_id) REFERENCES `users`(user_id),
     FOREIGN KEY (email_id) REFERENCES emails(email_id)

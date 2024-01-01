@@ -37,9 +37,10 @@ def login_facebook(data):
 
             driver.find_element_by_xpath('//android.widget.TextView[@content-desc="Facebook"]').click()
 
-            time.sleep(15)
+            time.sleep(10)
 
             checkpoint = capture_checkpoint(driver, (400, 55, 600, 130))
+            print(checkpoint)
             if (find_text_in_screenshot(driver, "on your mind?")
                     or LoginEnum.LOGIN_SUCCESS.value == checkpoint):
                 update_last_login(data.facebook_account_id)
@@ -48,26 +49,26 @@ def login_facebook(data):
 
             pass_login_checkpoint(driver, data)
 
-            element = driver.find_element_by_xpath(
-                '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
-            element.click()
-
-            element.send_keys(data.email.email_address)
-
-            element = driver.find_element_by_xpath(
-                '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
-            element.click()
-
-            element.send_keys(data.password)
-
-            while find_text_in_screenshot(driver, "Forgot password"):
-                element = driver.find_element_by_xpath('//android.view.View[@content-desc="Log in"]')
+            if find_text_in_screenshot(driver, "Forgot password"):
+                element = driver.find_element_by_xpath(
+                    '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
                 element.click()
-                time.sleep(15)
 
-            pass_login_checkpoint(driver, data)
+                element.send_keys(data.email.email_address)
 
-            time.sleep(5)
+                element = driver.find_element_by_xpath(
+                    '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[3]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
+                element.click()
+                element.send_keys(data.password)
+
+                while find_text_in_screenshot(driver, "Forgot password"):
+                    element = driver.find_element_by_xpath('//android.view.View[@content-desc="Log in"]')
+                    element.click()
+                    time.sleep(15)
+
+                pass_login_checkpoint(driver, data)
+
+            time.sleep(2)
 
             checkpoint = capture_checkpoint(driver, (400, 55, 600, 130))
             if find_text_in_screenshot(driver, "on your mind?") or LoginEnum.LOGIN_SUCCESS.value == checkpoint:
@@ -88,6 +89,9 @@ def pass_login_checkpoint(driver, data):
     while True:
 
         time.sleep(3)
+
+        if find_text_in_screenshot(driver, "Turn on contact uploading"):
+            driver.find_element_by_xpath('//android.view.ViewGroup[@content-desc="Not now"]').click()
 
         if find_text_in_screenshot(driver, "Something went wrong"):
             driver.find_element_by_xpath(

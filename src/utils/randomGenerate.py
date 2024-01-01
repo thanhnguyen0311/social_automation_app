@@ -23,7 +23,8 @@ def generate_random_password():
 
     # Fill the rest of the string with random characters
     remaining_length = max(0, random.randint(10, 20) - len(valid_chars))
-    valid_chars.extend(random.choice(uppercase_chars + lowercase_chars + digit_chars + special_chars) for _ in range(remaining_length))
+    valid_chars.extend(
+        random.choice(uppercase_chars + lowercase_chars + digit_chars + special_chars) for _ in range(remaining_length))
 
     # Shuffle the valid characters to randomize the order
     random.shuffle(valid_chars)
@@ -32,3 +33,19 @@ def generate_random_password():
     password = ''.join(valid_chars)
 
     return password
+
+
+def generate_random_digit_string():
+    length = random.randint(6, 10)
+
+    # Generate a random digit string with the chosen length
+    random_digits = ''.join(str(random.randrange(10)) for _ in range(length))
+
+    return random_digits
+
+
+def generate_random_true25percent():
+    probability_true = 0.25  # Probability for True
+    random_value = random.random()  # Generate a random float between 0 and 1
+
+    return random_value < probability_true

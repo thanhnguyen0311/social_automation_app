@@ -1,6 +1,11 @@
+import threading
+import time
 import tkinter as tk
 from tkinter import ttk
+
+from src.enum.farmEnum import FarmEnum
 from src.enum.taskEnum import TaskEnum
+from src.remote.facebook.farm.newfeed import farm_newFeed
 from src.remote.facebook.login import login_facebook
 from src.views.pages.fb.AccountsTree import FBAccountsList
 from src.views.pages.fb.AddPopup import AddFacebookAccount
@@ -12,7 +17,6 @@ class FBManager(tk.Toplevel):
         self.title("Facebook Service")
         self.geometry("1200x600")
         self.is_open = True
-        self.server = master.server
         self.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
         self.fb_account_list = FBAccountsList(self)
         self.add_fb_popup = None
@@ -52,6 +56,22 @@ class FBManager(tk.Toplevel):
                                   command=self.on_option_selected)
         button_action.grid(row=1, column=2,
                            padx=5, pady=10, sticky=tk.W)
+
+        self.option_farm = tk.StringVar()
+        self.option_farm.set(FarmEnum.NO_ACTION.value)
+        option_farm_menu = ttk.Combobox(button_frame,
+                                        textvariable=self.option,
+                                        values=[option.value for option in FarmEnum])
+        option_farm_menu.grid(row=2, column=0, columnspan=2,
+                              padx=5, pady=10, sticky=tk.NSEW)
+
+        button_farm = tk.Button(button_frame,
+                                text="RUN",
+                                width=10, height=1,
+                                command=self.on_option_selected)
+        button_farm.grid(row=2, column=2,
+                         padx=5, pady=10, sticky=tk.W)
+
         self.fb_account_list.pack(padx=10, pady=5,
                                   fill=tk.BOTH, expand=True)
 
@@ -64,7 +84,14 @@ class FBManager(tk.Toplevel):
         list_account = self.fb_account_list.get_selected()
         if selected_option == TaskEnum.LOGIN.value:
             for account in list_account:
-                login_facebook(account)
+                account.thread = threading.Thread(target=login_facebook, args=(account,))
+                account.thread.start()
+                time.sleep(3)
+        if selected_option == FarmEnum.NEW_FEED.value:
+            for account in list_account:
+                account.thread = threading.Thread(target=farm_newFeed, args=(account,))
+                account.thread.start()
+                time.sleep(3)
 
     def choose_popup(self, popup):
         if popup == AddFacebookAccount:
@@ -72,4 +99,3 @@ class FBManager(tk.Toplevel):
                 self.add_fb_popup = AddFacebookAccount(self)
             else:
                 return
-
