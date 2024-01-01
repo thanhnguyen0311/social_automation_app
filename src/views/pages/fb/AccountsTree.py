@@ -39,6 +39,7 @@ class FBAccountsList(ttk.Treeview):
 
         self.bind("<Motion>", self.on_cursor_move)
         self.data = {}
+        self.bbox_list = {}
 
     def get_selected(self):
         list_account = []
@@ -71,6 +72,11 @@ class FBAccountsList(ttk.Treeview):
         self.delete(*self.get_children())
         self.data = get_all_fb_accounts(1)
         for account_id, account in self.data.items():
+            if self.bbox_list.get(account_id):
+                self.bbox_list.get(account_id).destroy()
+            else:
+                pass
+
             if account.is_deleted:
                 continue
 
@@ -86,10 +92,20 @@ class FBAccountsList(ttk.Treeview):
                                 device_imei,
                                 account.last_login,
                                 account.create_date,
+                                "",
+                                account.status
                                 ))
+        self.show_status()
 
+    def show_status(self):
+        for account_id, account in self.data.items():
             bbox = self.bbox(account_id, "status")
             x, y, width, height = bbox
+            if account.status == "REGISTERED":
+                bold_font = font.Font(family="Arial", size=8, weight="bold")
+                account.status = tk.Label(self, text="REGISTERED", bg='white', fg='blue', font=bold_font)
+                account.status.place(x=x, y=y, width=width, height=height)
+
             if account.status == "ALIVE":
                 bold_font = font.Font(family="Arial", size=8, weight="bold")
                 account.status = tk.Label(self, text="LIVE", bg='white', fg='green', font=bold_font)
@@ -102,8 +118,10 @@ class FBAccountsList(ttk.Treeview):
 
             if account.status == "DIE":
                 bold_font = font.Font(family="Arial", size=8, weight="bold")
-                account.status = tk.Label(self, text="CHECKPOINT", bg='white', fg='black', font=bold_font)
+                account.status = tk.Label(self, text="DIE", bg='white', fg='black', font=bold_font)
                 account.status.place(x=x, y=y, width=width, height=height)
+
+            self.bbox_list[account_id] = account.status
 
     def show_device_hint(self, event, account):
         self.hint_window = tk.Toplevel(self, highlightthickness=2, highlightbackground="gray")

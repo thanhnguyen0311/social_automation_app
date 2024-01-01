@@ -1,47 +1,58 @@
-import socket
 import threading
-import queue
+
+import websockets
+import asyncio
 
 
-class SocketServer(threading.Thread):
-    def __init__(self, host, port, task_queue):
-        super().__init__()
-        self.host = host
-        self.port = port
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((host, port))
-        self.server_socket.listen(5)
-        self.clients = []
-        self.running = True
-        self.task_queue = task_queue
-        print("Socket started in " + str(self.port) + "/" + str(self.host))
+class SocketClient:
+    def __init__(self, uri, message_callback):
+        self.uri = uri
+        self.websocket = None
+        self.task_queue = asyncio.Queue()
+        self.message_callback = message_callback
 
-    def run(self):
-        while self.running:
-            try:
-                client_socket, client_address = self.server_socket.accept()
-                print(f"Accepted connection from {client_address}")
-                self.clients.append((client_socket, client_address))
-                self.handle_client(client_socket, client_address)
-            except socket.error:
-                pass
+        # Create and start a thread for the WebSocket client
+        self.websocket_thread = threading.Thread(target=self.start_websocket_client)
+        self.websocket_thread.start()
 
-    def handle_client(self, client_socket, client_address):
-        while self.running:
-            try:
-                data = client_socket.recv(1024)
-                if not data:
+    def start_websocket_client(self):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
+        loop.run_until_complete(self.connect())
+        loop.run_until_complete(self.receive_messages())
+
+    async def connect(self):
+        self.websocket = await websockets.connect(self.uri)
+        print(f"Connected to {self.uri}")
+
+        # Start the message processing task
+        asyncio.ensure_future(self.process_messages())
+
+    async def send_message(self, message):
+        await self.task_queue.put(("send", message))
+
+    async def receive_messages(self):
+        while True:
+            response = await self.websocket.recv()
+            print(f"Received: {response}")
+            if self.message_callback:
+                self.message_callback(response)
+
+    async def close(self):
+        await self.task_queue.put(("close", None))
+
+    async def process_messages(self):
+        try:
+            while True:
+                task, data = await self.task_queue.get()
+
+                if task == "send":
+                    await self.websocket.send(data)
+                    print(f"Sent: {data}")
+                elif task == "close":
+                    await self.websocket.close()
+                    print("Connection closed")
                     break
-                message = data.decode()
-                print(f"Received from {client_address}: {message}")
-
-                self.task_queue.put((client_address, message))
-            except socket.error:
-                break
-
-    def stop(self):
-        self.running = False
-        for client_socket, _ in self.clients:
-            client_socket.close()
-        self.server_socket.close()
-
+        except Exception as e:
+            print(f"Error processing messages: {e}")

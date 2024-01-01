@@ -25,7 +25,11 @@ def get_all_fb_accounts(user_id):
                                                   last_login=row['last_login'],
                                                   create_date=row['date'],
                                                   status=row['status'],
-                                                  is_deleted=bool(row['is_deleted'])
+                                                  is_deleted=bool(row['is_deleted']),
+                                                  cookie=row['cookie'],
+                                                  token=row['token'],
+                                                  uid=row['uid'],
+                                                  clone_target_uid=row['clone_target_uid']
                                                   )
 
         return fb_accounts

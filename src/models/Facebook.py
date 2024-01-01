@@ -15,7 +15,11 @@ class FBAccount:
                  last_login=None,
                  status="New",
                  is_deleted=False,
-                 create_date=datetime.now()):
+                 create_date=datetime.now(),
+                 cookie="",
+                 token="",
+                 uid="",
+                 clone_target_uid=""):
         self.facebook_account_id = facebook_account_id
         self.first_name = first_name
         self.last_name = last_name
@@ -24,6 +28,10 @@ class FBAccount:
         self.device = device
         self.last_login = last_login
         self.status = status
+        self.cookie = cookie
+        self.token = token
+        self.uid = uid
+        self.clone_target_uid = clone_target_uid
         self.is_deleted = is_deleted
         self.create_date = create_date
 

@@ -1,0 +1,15 @@
+selenium==4.0.0
+appium-python-client==2.1.4
+mysql-connector-python==8.2.0
+numpy==1.24.4
+pytesseract==0.3.10
+scikit-image==0.21.0
+websocket==0.2.1
+ttkbootstrap==0.5.3
+requests==2.31.0
+pyautogui~=0.9.54
+pygetwindow~=0.0.9
+Pillow~=10.1.0
+tk
+urllib3==1.26.18
+websockets~=12.0

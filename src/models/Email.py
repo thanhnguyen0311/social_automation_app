@@ -11,16 +11,50 @@ class EmailAccount:
                  email_address,
                  password,
                  email_id=None,
-                 create_date=datetime.now()):
+                 create_date=datetime.now(),
+                 device=None,
+                 facebook=False,
+                 tiktok=False,
+                 telegram=False,
+                 status=None,
+                 is_deleted=False):
         self.email_id = email_id
         self.first_name = first_name
         self.last_name = last_name
         self.email_address = email_address
         self.password = password
         self.create_date = create_date
+        self.device = device
+        self.facebook = facebook
+        self.status = status
+        self.tiktok = tiktok
+        self.telegram = telegram
+        self.is_deleted = is_deleted
 
     def __str__(self):
         return f'Email_account{self.first_name} {self.last_name} {self.email_address} {self.password} {self.create_date}'
+
+    @property
+    def first_name(self):
+        return self.__first_name
+
+    @first_name.setter
+    def first_name(self, value):
+        if 2 <= len(value) <= 10 and not any(char.isdigit() for char in value):
+            self.__first_name = value
+        else:
+            raise ValueError(f'Invalid first name: {value}')
+
+    @property
+    def last_name(self):
+        return self.__last_name
+
+    @last_name.setter
+    def last_name(self, value):
+        if 2 <= len(value) <= 10 and not any(char.isdigit() for char in value):
+            self.__last_name = value
+        else:
+            raise ValueError(f'Invalid last name: {value}')
 
     @property
     def email_address(self):
@@ -44,6 +78,7 @@ class EmailAccount:
 
             if result:
                 email_id = result[0]
+                raise ValueError("This email already exists")
 
             else:
                 insert_query = "INSERT INTO emails (first_name, last_name, email_address, password) VALUES (%s, %s, %s, %s)"
