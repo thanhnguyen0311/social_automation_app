@@ -90,19 +90,26 @@ class AddFacebookAccount(tk.Toplevel):
         self.cookie_entry = ttk.Entry(self, textvariable=self.cookie_var, width=20, font=("Helvetica", 11))
         self.cookie_entry.grid(row=6, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
 
+        tk.Label(self, text="Clone Target UID: ", font=("Helvetica", 10), bg='lightblue').grid(row=7, column=0,
+                                                                                               sticky=tk.W,
+                                                                                               pady=5)
+        self.clone_uid_var = tk.StringVar()
+        self.clone_uid_entry = ttk.Entry(self, textvariable=self.clone_uid_var, width=20, font=("Helvetica", 11))
+        self.clone_uid_entry.grid(row=7, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
+
         tk.Button(self,
                   text="Submit",
                   font=("Helvetica", 10),
-                  command=self.save_button_clicked).grid(row=7, column=1, sticky=tk.NSEW, pady=15)
+                  command=self.save_button_clicked).grid(row=8, column=1, sticky=tk.NSEW, pady=15)
         tk.Button(self,
                   text=" Cancel ",
                   font=("Helvetica", 10),
-                  command=self.on_close).grid(row=7, column=3, sticky=tk.NSEW, pady=15, padx=20)
+                  command=self.on_close).grid(row=8, column=3, sticky=tk.NSEW, pady=15, padx=20)
 
         self.generate_password()
 
         self.message_label = ttk.Label(self, text='', background='lightblue')
-        self.message_label.grid(row=8, column=1, columnspan=5, sticky=tk.NW)
+        self.message_label.grid(row=9, column=1, columnspan=5, sticky=tk.NW)
 
     def on_close(self):
         self.destroy()
@@ -124,7 +131,8 @@ class AddFacebookAccount(tk.Toplevel):
                 'auth_2fa': self.auth2fa_var.get(),
                 'cookie': self.cookie_var.get(),
                 'uid': self.uid_var.get(),
-                'token': self.token_var.get()
+                'token': self.token_var.get(),
+                'clone_target_uid': self.clone_uid_var.get()
             })
 
     def set_controller(self, controller):

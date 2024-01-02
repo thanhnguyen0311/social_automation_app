@@ -71,7 +71,7 @@ class FBAccountsList(ttk.Treeview):
     def refresh(self):
         self.delete(*self.get_children())
         self.data = get_all_fb_accounts(1)
-        for account_id, account in self.data.items():
+        for id, (account_id, account) in enumerate(self.data.items(), start=1):
             if self.bbox_list.get(account_id):
                 self.bbox_list.get(account_id).destroy()
             else:
@@ -85,7 +85,7 @@ class FBAccountsList(ttk.Treeview):
                 device_imei = account.device.imei
 
             self.insert("", "end", iid=account.facebook_account_id,
-                        values=(account.facebook_account_id,
+                        values=(id,
                                 account.first_name + " " + account.last_name,
                                 account.email.email_address,
                                 "*************",
