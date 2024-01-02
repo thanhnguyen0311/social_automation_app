@@ -18,3 +18,11 @@ def find_text_in_screenshot(driver, input_text):
         return True
     else:
         return False
+
+
+def get_email_type(email):
+    value = email.split("@")
+    if len(value) == 2:
+        return value[1]
+    else:
+        return None

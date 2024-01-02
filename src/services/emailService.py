@@ -98,3 +98,11 @@ def generate_email_info():
         random_info['last_name'] = last_name
     random_info['password'] = generate_random_password()
     return random_info
+
+
+def get_email_for_facebook(user_id):
+    email_list = get_all_emails(user_id)
+    for key in list(email_list.keys()):
+        if email_list[key].facebook or email_list[key].is_deleted:
+            del email_list[key]
+    return email_list

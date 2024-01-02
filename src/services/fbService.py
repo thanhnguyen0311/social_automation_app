@@ -1,3 +1,5 @@
+import requests
+
 from src.connection.mysqlConnection import connect_to_database
 from src.models.Facebook import FBAccount
 from src.services.deviceService import find_device_by_id
@@ -28,6 +30,7 @@ def get_all_fb_accounts(user_id):
                                                   is_deleted=bool(row['is_deleted']),
                                                   cookie=row['cookie'],
                                                   token=row['token'],
+                                                  auth_2fa=row['auth_2fa'],
                                                   uid=row['uid'],
                                                   clone_target_uid=row['clone_target_uid']
                                                   )
@@ -80,3 +83,10 @@ def update_account_status(fb_account_id, status):
 
     except Exception as e:
         raise ConnectionError("Could not connect to database") from e
+
+
+def get_2fa_code(string):
+    response = requests.get(f"https://2fa.live/tok/{string}")
+    if response.status_code == 200:
+        code = response.json()
+        return code['token']
