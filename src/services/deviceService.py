@@ -2,6 +2,8 @@ from src.connection.mysqlConnection import connect_to_database
 from src.ld_manager.create_ld import clone_ld, create_ld
 from src.ld_manager.get_list_ld import get_list_ld
 from src.models.Device import Device
+from src.models.Email import EmailAccount
+from src.models.Facebook import FBAccount
 
 
 def check_device_exists(data):
@@ -18,9 +20,14 @@ def check_device_exists(data):
             get_device = clone_ld(data.device)
             get_device.created = True
         else:
-            get_device = create_ld()
+            get_device = create_device()
             get_device.created = True
-            add_device_to_facebook(data.facebook_account_id, get_device)
+            if isinstance(data, FBAccount):
+                add_device_to_facebook(data.facebook_account_id, get_device)
+                if data.email.device is None:
+                    new_device_email(data.email.email_id, get_device)
+            if isinstance(data, EmailAccount):
+                new_device_email(data.email_id, get_device)
 
         return get_device
 
@@ -60,21 +67,47 @@ def add_device_to_facebook(fb_account_id, device):
     try:
         connection = connect_to_database()
         cursor = connection.cursor(dictionary=True)
-        insert_query = "INSERT INTO devices (imei, manufacturer, model, imsi, android_id, sim_serial, mac_address) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        cursor.execute(insert_query, (
-            device.imei, device.manufacturer,
-            device.model, device.imsi,
-            device.androidId, device.simSerial,
-            device.macAddress))
-        device_id = cursor.lastrowid
-
         alter_query = "UPDATE fb_accounts SET device_id = %s WHERE fb_id = %s"
-        cursor.execute(alter_query, (device_id, fb_account_id,))
+        cursor.execute(alter_query, (device.device_id, fb_account_id,))
         connection.commit()
         cursor.close()
         connection.close()
-        return device_id
 
     except Exception as e:
         raise ConnectionError("Could not connect to database") from e
 
+
+def new_device_email(email_id, device):
+    try:
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
+        alter_query = "UPDATE emails SET device_id = %s WHERE email_id = %s"
+        cursor.execute(alter_query, (device.device_id, email_id,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+
+    except Exception as e:
+        raise ConnectionError("Could not create device for email") from e
+
+
+def create_device():
+    try:
+        get_device = create_ld()
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
+        insert_query = "INSERT INTO devices (imei, manufacturer, model, imsi, android_id, sim_serial, mac_address) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        cursor.execute(insert_query, (
+            get_device.imei, get_device.manufacturer,
+            get_device.model, get_device.imsi,
+            get_device.androidId, get_device.simSerial,
+            get_device.macAddress))
+        device_id = cursor.lastrowid
+        connection.commit()
+        cursor.close()
+        connection.close()
+        get_device.device_id = device_id
+        return get_device
+
+    except Exception as e:
+        raise ConnectionError("Could not create device for email") from e

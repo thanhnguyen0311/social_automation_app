@@ -80,15 +80,20 @@ class FBAccount:
         try:
             connection = connect_to_database()
             cursor = connection.cursor()
-            select_query = "SELECT * FROM emails WHERE email_address = %s"
-            cursor.execute(select_query, (email_address,))
-            result = cursor.fetchone()
+            if email_address:
+                select_query = "SELECT * FROM emails WHERE email_address = %s"
+                cursor.execute(select_query, (email_address,))
+                result = cursor.fetchone()
 
-            if result:
-                email_id = result[0]
-                insert_query = "INSERT INTO fb_accounts (first_name, last_name, password, email_id, cookie, token, uid, auth_2fa) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-                cursor.execute(insert_query,
-                               (self.first_name, self.last_name, self.password, email_id, self.cookie, self.token, self.uid, self.auth_2fa))
+                if result:
+                    email_id = result[0]
+                    device_id = result[7]
+                    insert_query = "INSERT INTO fb_accounts (first_name, last_name, password, device_id, email_id, cookie, token, uid, auth_2fa, clone_target_uid) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                    cursor.execute(insert_query,
+                                   (self.first_name, self.last_name, self.password, device_id, email_id, self.cookie, self.token, self.uid, self.auth_2fa, self.clone_target_uid))
+
+                alter_query = "UPDATE emails SET facebook = TRUE where email_address = %s"
+                cursor.execute(alter_query, (email_address,))
 
             connection.commit()
             cursor.close()

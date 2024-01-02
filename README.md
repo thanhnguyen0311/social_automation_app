@@ -9,6 +9,8 @@ pip install pytesseract<br>
 pip install mysql-connector-python<br><br><br>
 
 secret token = jPJ7ksubWuswP7WbyHkqq8xh5zM3cdQ0Y7BeSw9F5whKLfyrp01Hse7QeJKtXW30
+https://story-shack-cdn-v2.glitch.me/generators/vietnamese-name-generator?count=3
+https://story-shack-cdn-v2.glitch.me/generators/username-generator?count=6
 
 USE social_automation;
 
@@ -51,6 +53,7 @@ CREATE TABLE IF NOT EXISTS emails (
 	facebook bit(1) default(0),
 	tiktok bit(1) default(0),
 	telegram bit(1) default(0),
+	phone VARCHAR(20),
     FOREIGN KEY (user_id) REFERENCES `users`(user_id),
 	FOREIGN KEY (device_id) REFERENCES devices(device_id);
 );
@@ -72,6 +75,9 @@ CREATE TABLE IF NOT EXISTS fb_accounts (
     uid VARCHAR(255),
     cookie VARCHAR(255),
     clone_target_uid VARCHAR(255),
+	birthday Date,
+	auth_2fa VARCHAR(255),
+	phone VARCHAR(20),
     FOREIGN KEY (device_id) REFERENCES devices(device_id),
     FOREIGN KEY (user_id) REFERENCES `users`(user_id),
     FOREIGN KEY (email_id) REFERENCES emails(email_id)

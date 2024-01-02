@@ -13,6 +13,9 @@ from src.utils.imageUtils import capture_checkpoint
 
 
 def login_facebook(data):
+    if data.device.created:
+        time.sleep(15)
+
     desired_cap = {
         "udid": data.device.uuid,
         "platformName": "Android",
@@ -89,12 +92,25 @@ def pass_login_checkpoint(driver, data):
             element.send_keys(get_2fa_code(data.auth_2fa))
 
             driver.find_element(By.XPATH, '//android.widget.Button[@content-desc="Continue"]/android.view.ViewGroup').click()
+            continue
 
-        if find_text_in_screenshot(driver, "Turn on contact uploading"):
+        if (find_text_in_screenshot(driver, "Turn on contact uploading")
+                or find_text_in_screenshot(driver, "See who's on")):
             driver.find_element(By.XPATH, '//android.view.ViewGroup[@content-desc="Not now"]').click()
+            continue
+
 
         if find_text_in_screenshot(driver, "Something went wrong"):
             driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]').click()
+            continue
+
+        if find_text_in_screenshot(driver, "Are you sure want to skip"):
+            driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout[2]/android.widget.LinearLayout/android.widget.Button[1]').click()
+            continue
+
+        if find_text_in_screenshot(driver, "We couldn't find any"):
+            driver.find_element(By.XPATH, '//android.view.ViewGroup[@content-desc="Next"]').click()
+            continue
 
         if find_text_in_screenshot(driver, "is not visible") or find_text_in_screenshot(driver, "appeal"):
             print("check point")

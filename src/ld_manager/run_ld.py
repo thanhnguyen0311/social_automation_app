@@ -24,12 +24,11 @@ def run_ld(device):
 
 def run_list_ld(list_selected):
     try:
-
-        time.sleep(5)
+        time.sleep(2)
         subprocess.run(["adb", "kill-server"], check=True)
-        time.sleep(5)
+        time.sleep(2)
         subprocess.run(["adb", "start-server"], check=True)
-        time.sleep(10)
+        time.sleep(2)
         list_account = list_selected
         for account in list_account:
             account.device = check_device_exists(account)
@@ -40,4 +39,3 @@ def run_list_ld(list_selected):
 
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
-        return list_account

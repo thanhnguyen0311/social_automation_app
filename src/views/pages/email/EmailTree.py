@@ -44,7 +44,7 @@ class MailList(ttk.Treeview):
     def refresh(self):
         self.delete(*self.get_children())
         self.data = get_all_emails(1)
-        for email_id, email in self.data.items():
+        for id, (email_id, email) in enumerate(self.data.items(), start=1):
             if self.bbox_list.get(email_id):
                 self.bbox_list.get(email_id).destroy()
             else:
@@ -58,7 +58,7 @@ class MailList(ttk.Treeview):
                 device_imei = email.device.imei
 
             self.insert("", "end", iid=email_id,
-                        values=(email_id,
+                        values=(id,
                                 email.first_name + " " + email.last_name,
                                 email.email_address,
                                 device_imei,
