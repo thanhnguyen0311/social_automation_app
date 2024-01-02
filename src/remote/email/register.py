@@ -9,7 +9,8 @@ from urllib3.exceptions import MaxRetryError
 
 from src.enum.EmailEnum import EmailEnum
 from src.utils.findText import get_email_type
-from src.utils.imageUtils import capture_checkpoint
+from selenium.webdriver.common.by import By
+from urllib3.exceptions import MaxRetryError
 
 
 def register_email():

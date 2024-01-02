@@ -86,9 +86,9 @@ class FBAccount:
 
             if result:
                 email_id = result[0]
-                insert_query = "INSERT INTO fb_accounts (first_name, last_name, password, email_id, cookie, token, uid, auth_2fa) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                insert_query = "INSERT INTO fb_accounts (first_name, last_name, password, email_id, cookie, token, uid, auth_2fa, clone_target_uid) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(insert_query,
-                               (self.first_name, self.last_name, self.password, email_id, self.cookie, self.token, self.uid, self.auth_2fa))
+                               (self.first_name, self.last_name, self.password, email_id, self.cookie, self.token, self.uid, self.auth_2fa, self.clone_target_uid))
 
             connection.commit()
             cursor.close()
