@@ -1,7 +1,6 @@
 from appium import webdriver
 import base64
 import time
-from appium.webdriver.common.mobileby import MobileBy
 import subprocess
 import pyautogui as pag
 import pygetwindow as gw
