@@ -35,6 +35,21 @@ def generate_random_password():
     return password
 
 
+def generate_random_email_password():
+    uppercase_letter = random.choice(string.ascii_uppercase)
+    lowercase_letter = random.choice(string.ascii_lowercase)
+    special_char = random.choice('@-')
+    number = random.choice(string.digits)
+    other_chars = string.ascii_letters + string.digits + '@-'
+    remaining_chars = ''.join(random.choice(other_chars) for _ in range(random.randint(10, 15)))
+
+    # Shuffle all the characters
+    all_chars = list(uppercase_letter + lowercase_letter + special_char + number + remaining_chars)
+    random.shuffle(all_chars)
+
+    return ''.join(all_chars)
+
+
 def generate_random_digit_string():
     length = random.randint(6, 10)
 

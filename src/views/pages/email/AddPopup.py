@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from src.controller.addEmail import AddEmailController
+from src.enum.EmailEnum import EmailEnum
 from src.models.Email import EmailAccount
 from src.services.emailService import generate_email_info
 from src.utils.randomGenerate import generate_random_password
@@ -31,14 +32,25 @@ class AddEmail(tk.Toplevel):
         self.email_entry = ttk.Entry(self, textvariable=self.email_var, width=20, font=("Helvetica", 11))
         self.email_entry.grid(row=0, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
 
-        tk.Label(self, text="Password: ", font=("Helvetica", 10), bg='lightblue').grid(row=1, column=0, sticky=tk.W,
+
+        tk.Label(self, text="Email type: ", font=("Helvetica", 10), bg='lightblue').grid(row=1, column=0, sticky=tk.W,
+                                                                                         pady=5)
+        self.option_email = tk.StringVar()
+        self.option_email.set(EmailEnum.HOTMAIL.value)
+        option_menu = ttk.Combobox(self,
+                                   textvariable=self.option_email,
+                                   values=[option.value for option in EmailEnum])
+        option_menu.grid(row=1, column=1, columnspan=2,
+                         padx=5, pady=10, sticky=tk.NSEW)
+
+        tk.Label(self, text="Password: ", font=("Helvetica", 10), bg='lightblue').grid(row=2, column=0, sticky=tk.W,
                                                                                        pady=5)
         self.password_var = tk.StringVar()
         self.password_entry = ttk.Entry(self, textvariable=self.password_var, width=20, font=("Helvetica", 11))
-        self.password_entry.grid(row=1, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
+        self.password_entry.grid(row=2, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
         tk.Button(self,
                   text="Generate",
-                  command=self.generate_account).grid(row=1, column=5, sticky=tk.W, pady=5, padx=5)
+                  command=self.generate_account).grid(row=2, column=5, sticky=tk.W, pady=5, padx=5)
 
         tk.Label(self,
                  text="First Name: ",
@@ -54,7 +66,7 @@ class AddEmail(tk.Toplevel):
                  bg='lightblue').grid(row=3, column=3, sticky=tk.N, pady=5)
         self.last_name_var = tk.StringVar()
         self.last_name_entry = ttk.Entry(self, textvariable=self.last_name_var, width=9, font=("Helvetica", 11))
-        self.last_name_entry.grid(row=3, column=4, sticky=tk.NSEW, pady=5)
+        self.last_name_entry.grid(row=3, column=5, columnspan=10, sticky=tk.NSEW, pady=5)
 
         tk.Button(self,
                   text="Submit",
@@ -74,7 +86,7 @@ class AddEmail(tk.Toplevel):
         self.mail_list.on_refresh_clicked()
 
     def generate_account(self):
-        data = generate_email_info()
+        data = generate_email_info(self.option_email.get())
         self.password_entry.delete(0, tk.END)
         self.password_entry.insert(0, data['password'])
         self.first_name_entry.delete(0, tk.END)
@@ -107,4 +119,3 @@ class AddEmail(tk.Toplevel):
 
     def hide_message(self):
         self.message_label['text'] = ''
-

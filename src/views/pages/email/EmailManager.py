@@ -1,6 +1,11 @@
+import threading
+import time
 import tkinter as tk
 from tkinter import ttk
 
+from src.enum.EmailEnum import EmailActionEnum
+from src.ld_manager.run_ld import run_list_ld
+from src.remote.email.register import register_email
 from src.views.pages.email.AddPopup import AddEmail
 from src.views.pages.email.EmailTree import MailList
 
@@ -28,6 +33,21 @@ class EmailManager(tk.Frame):
                                   width=10, height=1)
         button_remove.grid(row=0, column=2, padx=5)
 
+        self.option = tk.StringVar()
+        self.option.set(EmailActionEnum.NO_ACTION.value)
+        option_menu = ttk.Combobox(button_frame,
+                                   textvariable=self.option,
+                                   values=[option.value for option in EmailActionEnum])
+        option_menu.grid(row=1, column=0, columnspan=2,
+                         padx=5, pady=10, sticky=tk.NSEW)
+
+        button_action = tk.Button(button_frame,
+                                  text="RUN",
+                                  width=10, height=1,
+                                  command=self.on_option_selected)
+        button_action.grid(row=1, column=2,
+                           padx=5, pady=10, sticky=tk.W)
+
         self.mail_list = MailList(self)
         self.mail_list.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
@@ -37,3 +57,15 @@ class EmailManager(tk.Frame):
                 self.add_email_popup = AddEmail(self)
             else:
                 return
+
+    def on_option_selected(self):
+        selected_option = self.option.get()
+        list_account = self.mail_list.get_selected()
+
+        list_account = run_list_ld(list_account)
+
+        if selected_option == EmailActionEnum.CREATE.value:
+            for account in list_account:
+                account.thread = threading.Thread(target=register_email, args=(account,))
+                account.thread.start()
+                time.sleep(3)
