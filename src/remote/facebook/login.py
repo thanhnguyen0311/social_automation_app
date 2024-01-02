@@ -73,6 +73,9 @@ def login_facebook(data):
             print(f"Error: {e}")
             continue
 
+        except Exception as e:
+            continue
+
 
 def pass_login_checkpoint(driver, data):
     while True:
