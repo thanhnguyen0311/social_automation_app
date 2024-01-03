@@ -2,51 +2,50 @@ import random
 import time
 
 from appium import webdriver
+from appium.webdriver.common.mobileby import MobileBy
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import ActionChains
-from selenium.webdriver.common.by import By
-from urllib3.exceptions import MaxRetryError
 
 from src.enum.EmailEnum import EmailEnum
-from src.utils.findText import get_email_type
+from src.services.emailService import update_email_status
+from src.utils.findText import get_email_type, find_text_in_screenshot
 from selenium.webdriver.common.by import By
 from urllib3.exceptions import MaxRetryError
 
+from src.utils.textToKeyCode import text_to_keycodes
 
-def register_email():
+
+def register_email(data):
+    print(data.email_address)
+    if data.device.created:
+        time.sleep(15)
+
+    proxy_address = '202.159.35.153'
+    proxy_port = '443'
     desired_cap = {
-        "udid": "emulator-5564",
+        "udid": data.device.uuid,
         "platformName": "Android",
         "appPackage": "com.ldmnq.launcher3",
         "appActivity": "com.android.launcher3.Launcher"
+        # 'proxy': {
+        #     'httpProxy': f"{proxy_address}:{proxy_port}",
+        #     'ftpProxy': f"{proxy_address}:{proxy_port}",
+        #     'sslProxy': f"{proxy_address}:{proxy_port}",
+        #     'proxyType': 'MANUAL',
+        # }
     }
+
+
 
     while True:
         try:
             driver = webdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
             driver.implicitly_wait(30)
 
-            driver.find_element(By.XPATH, '//android.widget.FrameLayout[@content-desc="Folder: System '
-                                          'Apps"]/android.widget.ImageView').click()
-            driver.find_element(By.XPATH, '//android.widget.TextView[@content-desc="Settings"]').click()
-            driver.find_element_by_android_uiautomator('new UiScrollable(new UiSelector().scrollable(true).instance('
-                                                       '0)).scrollIntoView(new UiSelector().text('
-                                                       '"Accounts").instance(0));')
-            time.sleep(2)
-            driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                          '.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout'
-                                          '/android.widget.LinearLayout/android.widget.FrameLayout['
-                                          '2]/android.support.v7.widget.RecyclerView/android.widget.LinearLayout['
-                                          '4]/android.widget.LinearLayout/android.widget.TextView[1]').click()
-            driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                          '.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout'
-                                          '/android.widget.LinearLayout/android.widget.LinearLayout/android.widget'
-                                          '.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout'
-                                          '/android.support.v7.widget.RecyclerView/android.widget.LinearLayout['
-                                          '1]/android.widget.LinearLayout/android.widget.RelativeLayout').click()
-
-            if get_email_type("Brilliantedee8903973608@gmail.com") == EmailEnum.GMAIL.value:
-                register_gmail(driver=driver)
+            if get_email_type(data.email_address) == EmailEnum.GMAIL.value:
+                register_gmail(driver=driver, data=data)
+            if get_email_type(data.email_address) == EmailEnum.HOTMAIL.value:
+                register_hotmail(driver=driver, data=data)
 
             return driver
 
@@ -58,112 +57,132 @@ def register_email():
             continue
 
 
-def register_gmail(driver, data=None):
-    driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                  '.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget'
-                                  '.LinearLayout/android.widget.LinearLayout/android.widget.FrameLayout/android'
-                                  '.widget.LinearLayout/android.widget.FrameLayout/android.support.v7.widget'
-                                  '.RecyclerView/android.widget.LinearLayout['
-                                  '8]/android.widget.LinearLayout/android.widget.RelativeLayout').click()
-    driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                  '.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                  '.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                  '.FrameLayout/android.webkit.WebView/android.webkit.WebView/android.view.View'
-                                  '/android.view.View/android.view.View[6]/android.view.View/android.view.View').click()
-    driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                  '.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                  '.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                  '.FrameLayout/android.webkit.WebView/android.webkit.WebView/android.view.View'
-                                  '/android.view.View/android.view.View[6]/android.view.View['
-                                  '2]/android.view.View/android.view.MenuItem[1]').click()
+def register_gmail(driver, data):
+    return
 
 
+def register_hotmail(driver, data):
+    driver.find_element(By.XPATH, '//android.widget.TextView[@content-desc="Aqua Mail"]').click()
 
-    first_name = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout'
-                                               '/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                               '.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout'
-                                               '/android.widget.LinearLayout/android.widget.FrameLayout/android'
-                                               '.webkit.WebView/android.webkit.WebView/android.view.View/android.view'
-                                               '.View/android.view.View[4]/android.view.View/android.view.View['
-                                               '1]/android.view.View/android.view.View[1]/android.widget.EditText')
-    first_name.click()
-    first_name.send_keys('Nguyễn')
+    time.sleep(3)
+    if find_text_in_screenshot(driver, "Your universal email app"):
+        driver.find_element(By.XPATH,
+                            '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.View').click()
 
-    time.sleep(2)
+    time.sleep(3)
     driver.press_keycode(61)
-    time.sleep(2)
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(66)
 
-    actions = ActionChains(driver)
-    actions.send_keys('Diễm Trinh')
+    driver.find_element(By.XPATH,
+                        '//android.view.View[@content-desc="Create a Microsoft account"]/android.widget.TextView').click()
 
-    time.sleep(2)
+    time.sleep(8)
+    text_to_keycodes(data.email_address, driver)
 
-    driver.find_element(By.CLASS_NAME, 'android.widget.Button').click()
-    month = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                          '.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout'
-                                          '/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                          '.LinearLayout/android.widget.FrameLayout/android.webkit.WebView/android'
-                                          '.webkit.WebView/android.view.View/android.view.View/android.view.View['
-                                          '4]/android.view.View/android.view.View[1]/android.view.View['
-                                          '2]/android.view.View')
-    month.click()
-    month = driver.find_element(By.XPATH, f'/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android'
-                                          f'.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                          f'.FrameLayout/android.widget.FrameLayout/android.widget.ListView/android'
-                                          f'.widget.CheckedTextView[{random.randint(1, 10)}]')
-    month.click()
-    day = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                        '.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout'
-                                        '/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                        '.LinearLayout/android.widget.FrameLayout/android.webkit.WebView/android'
-                                        '.webkit.WebView/android.view.View/android.view.View/android.view.View['
-                                        '4]/android.view.View/android.view.View[2]/android.view.View['
-                                        '1]/android.widget.EditText')
-    day.click()
-    day.send_keys("03")
-    year = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                         '.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout'
-                                         '/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                         '.LinearLayout/android.widget.FrameLayout/android.webkit.WebView/android'
-                                         '.webkit.WebView/android.view.View/android.view.View/android.view.View['
-                                         '4]/android.view.View/android.view.View[3]/android.view.View['
-                                         '1]/android.widget.EditText')
-    year.click()
-    year.send_keys("1994")
-    gender = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                           '.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout'
-                                           '/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                           '.LinearLayout/android.widget.FrameLayout/android.webkit.WebView/android'
-                                           '.webkit.WebView/android.view.View/android.view.View/android.view.View['
-                                           '4]/android.view.View/android.view.View[4]/android.view.View['
-                                           '2]/android.view.View')
-    gender.click()
-    gender_male = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout'
-                                                '/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                                '.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                                '.ListView/android.widget.CheckedTextView[2]')
-    gender_male.click()
-    driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                  '.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                  '.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                  '.FrameLayout/android.webkit.WebView/android.webkit.WebView/android.view.View'
-                                  '/android.view.View/android.view.View['
-                                  '5]/android.view.View/android.widget.Button').click()
-    driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                  '.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                  '.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
-                                  '.FrameLayout/android.webkit.WebView/android.webkit.WebView/android.view.View['
-                                  '2]/android.view.View[3]/android.view.View/android.view.View/android.view.View['
-                                  '3]').click()
-    email = driver.find_element(By.XPATH, '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                          '.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout'
-                                          '/android.widget.FrameLayout/android.widget.FrameLayout/android.widget'
-                                          '.LinearLayout/android.widget.FrameLayout/android.webkit.WebView/android'
-                                          '.webkit.WebView/android.view.View[2]/android.view.View['
-                                          '3]/android.view.View/android.view.View[2]/android.view.View['
-                                          '1]/android.widget.EditText')
-    email.click()
-    email.send_keys("Brilliantedee8903973608")
+    check = True
 
+    while True:
+        time.sleep(2)
+        if check:
+            driver.press_keycode(61)
+            time.sleep(1)
+        driver.press_keycode(61)
+        time.sleep(1)
+        driver.press_keycode(61)
+        time.sleep(1)
+        driver.press_keycode(61)
+        time.sleep(1)
+        driver.press_keycode(61)
+        time.sleep(1)
+        driver.press_keycode(66)
 
-register_email()
+        time.sleep(3)
+        if find_text_in_screenshot(driver, "Introduction to the"):
+            driver.press_keycode(66)
+            check = not check
+            continue
+        else:
+            break
+
+    time.sleep(5)
+    text_to_keycodes(data.password, driver)
+    time.sleep(10)
+
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(66)
+
+    time.sleep(5)
+    text_to_keycodes(data.first_name, driver)
+
+    time.sleep(1)
+    driver.press_keycode(61)
+
+    time.sleep(3)
+    text_to_keycodes(data.last_name, driver)
+
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(66)
+
+    time.sleep(3)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(66)
+
+    driver.find_element(By.XPATH,
+                        f'/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.ListView/android.widget.CheckedTextView[{str(random.randint(2, 8))}]').click()
+
+    time.sleep(3)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(66)
+
+    driver.find_element(By.XPATH,
+                        f'/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.ListView/android.widget.CheckedTextView[{str(random.randint(2, 9))}]').click()
+
+    time.sleep(3)
+    driver.press_keycode(61)
+    time.sleep(1)
+    text_to_keycodes(str(random.randint(1989, 2002)), driver)
+
+    time.sleep(3)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(66)
+
+    print("CHECKPOINT")
+    while True:
+        if find_text_in_screenshot(driver, "Let this app access your"):
+            print(f"Successfully created {data.email_address}")
+            update_email_status(data.email_id, "ALIVE")
+            break
+
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(61)
+    time.sleep(1)
+    driver.press_keycode(66)
+    time.sleep(3)
+
+    return

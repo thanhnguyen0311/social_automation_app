@@ -1,9 +1,11 @@
 import requests
 import random
 from src.connection.mysqlConnection import connect_to_database
+from src.enum.EmailEnum import EmailEnum
 from src.models.Email import EmailAccount
 from src.services.deviceService import find_device_by_id
-from src.utils.randomGenerate import generate_random_digit_string, generate_random_password
+from src.utils.randomGenerate import generate_random_digit_string, generate_random_password, \
+    generate_random_email_password
 
 
 def find_email_by_id(email_id):
@@ -19,6 +21,7 @@ def find_email_by_id(email_id):
                              first_name=result['first_name'],
                              last_name=result['last_name'],
                              email_address=result['email_address'],
+                             device=find_device_by_id(result['device_id']),
                              password=result['password'],
                              create_date=result['create_date'])
         if result['device_id']:
@@ -76,13 +79,13 @@ def remove_email(email_id):
         raise ConnectionError("Could not connect to database") from e
 
 
-def generate_email_info():
+def generate_email_info(email_type=EmailEnum.HOTMAIL.value):
     response = requests.get("https://story-shack-cdn-v2.glitch.me/generators/username-generator?count=6")
     random_info = {}
     if response.status_code == 200:
         data = response.json()
         username = data['data'][0]['name']
-        email = username + generate_random_digit_string() + "@gmail.com"
+        email = username + generate_random_digit_string() + f'@{email_type}'
         random_info['email'] = email
 
     response = requests.get("https://story-shack-cdn-v2.glitch.me/generators/vietnamese-name-generator?count=5")
@@ -96,7 +99,7 @@ def generate_email_info():
         last_name = name[1] + " " + name[2]
         random_info['first_name'] = first_name
         random_info['last_name'] = last_name
-    random_info['password'] = generate_random_password()
+    random_info['password'] = generate_random_email_password()
     return random_info
 
 
@@ -106,3 +109,18 @@ def get_email_for_facebook(user_id):
         if email_list[key].facebook or email_list[key].is_deleted:
             del email_list[key]
     return email_list
+
+
+def update_email_status(email_id, status):
+    try:
+        connection = connect_to_database()
+        cursor = connection.cursor(dictionary=True)
+        alter_query = "UPDATE emails SET status = %s WHERE email_id = %s"
+        cursor.execute(alter_query, (status, email_id,))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return True
+
+    except Exception as e:
+        raise ConnectionError("Could not connect to database") from e
