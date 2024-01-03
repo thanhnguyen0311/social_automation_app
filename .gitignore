@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 *.idea
 Tesseract-OCR/
+setup/
 
 instance/
 
@@ -13,3 +14,4 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+/server/

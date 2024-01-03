@@ -8,6 +8,7 @@ LDCONSOLE_PATH = os.path.join(LDPLAYER_PATH, "ldconsole.exe")
 pytesseract_PATH = os.path.join("Tesseract-OCR", "tesseract.exe")
 CLONE_LD_DATA = True
 LOGO_PATH = os.path.join("assets", "img", "logo.png")
+SERVER_SOCKET = "ws://luxcoin.hieuchauspa.com/ws/connect/"
 
 account_data_config = {
     'host': '125.212.243.130',

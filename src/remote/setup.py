@@ -1,7 +1,6 @@
 from appium import webdriver
 import base64
 import time
-from appium.webdriver.common.mobileby import MobileBy
 import subprocess
 import pyautogui as pag
 import pygetwindow as gw
@@ -67,8 +66,7 @@ element = driver.find_element_by_xpath('//android.widget.TextView[@content-desc=
 element.click()
 
 time.sleep(5)
-driver.find_element_by_android_uiautomator(
-    'new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text("Tài khoản").instance(0));')
+driver.find_element_by_android_uiautomator('new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().text("Tài khoản").instance(0));')
 element_text = 'Tài khoản'
 element_resource_id = 'android:id/title'
 element_locator = (
