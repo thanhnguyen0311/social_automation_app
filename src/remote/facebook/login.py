@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from urllib3.exceptions import MaxRetryError
 
 from src.enum.checkpoints import LoginEnum
+from src.ld_manager.adb_shells import find_package_running
 from src.ld_manager.reboot_ld import reboot_ld
 from src.ld_manager.run_ld import run_list_ld
 from src.services.fbService import update_last_login, update_account_status, get_2fa_code
@@ -36,19 +37,22 @@ def login_facebook(data):
             driver = webdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
             driver.implicitly_wait(30)
 
+            # if not find_package_running("com.facebook.katana", data.device):
             driver.find_element(By.XPATH, '//android.widget.TextView[@content-desc="Facebook"]').click()
 
             time.sleep(10)
 
             checkpoint = capture_checkpoint(driver, (400, 55, 600, 130))
-            print(checkpoint)
             if (find_text_in_screenshot(driver, "on your mind?")
-                    or LoginEnum.LOGIN_SUCCESS.value == checkpoint):
+                    or LoginEnum.LOGIN_SUCCESS.value == checkpoint or LoginEnum.LOGIN_SUCCESS2.value == checkpoint):
                 update_last_login(data.facebook_account_id)
                 print(f"Login successful to account {data.email.email_address}.")
                 return driver
 
             pass_login_checkpoint(driver, data)
+            if data.status == "CHECKPOINT":
+                driver.quit()
+                return
 
             if find_text_in_screenshot(driver, "Forgot password"):
                 element = driver.find_element(By.XPATH,
@@ -68,11 +72,15 @@ def login_facebook(data):
                     time.sleep(15)
 
                 pass_login_checkpoint(driver, data)
+                if data.status == "CHECKPOINT":
+                    driver.quit()
+                    return
 
             time.sleep(2)
 
             checkpoint = capture_checkpoint(driver, (400, 55, 600, 130))
-            if find_text_in_screenshot(driver, "on your mind?") or LoginEnum.LOGIN_SUCCESS.value == checkpoint:
+            if (find_text_in_screenshot(driver, "on your mind?")
+                    or LoginEnum.LOGIN_SUCCESS.value == checkpoint):
                 update_last_login(data.facebook_account_id)
                 print(f"Login successful to account {data.email.email_address}.")
                 return driver
@@ -85,7 +93,6 @@ def login_facebook(data):
             continue
 
         except Exception as e:
-            reboot_ld(data.device)
             time.sleep(10)
             continue
 
@@ -130,6 +137,7 @@ def pass_login_checkpoint(driver, data):
 
         if find_text_in_screenshot(driver, "is not visible") or find_text_in_screenshot(driver, "appeal"):
             print("check point")
+            data.status = "CHECKPOINT"
             update_account_status(data.facebook_account_id, "CHECKPOINT")
             driver.quit()
             return

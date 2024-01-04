@@ -6,6 +6,7 @@ import time
 
 from src.constants.constants import LDCONSOLE_PATH
 from src.ld_manager.adb_shells import restart_adb_server
+from src.ld_manager.get_list_ld import get_list_ld
 from src.ld_manager.is_running import is_running
 from src.ld_manager.reboot_ld import reboot_ld
 
@@ -28,17 +29,25 @@ def run_ld(device):
 
 def run_list_ld(list_selected):
     try:
-        restart_adb_server()
         list_devices = []
+        list_lds = get_list_ld()
         for account in list_selected:
             if account.device is None:
                 check_devices(account, list_devices)
                 continue
-            threading.Thread(target=check_devices, args=(account, list_devices,)).start()
+            if any(device.email_address == account.device.name for device in list_lds):
+                threading.Thread(target=check_devices, args=(account, list_devices,)).start()
+            else:
+                check_devices(account, list_devices)
+
         while len(list_devices) != len(list_selected):
             if len(list_devices) == len(list_selected):
                 break
-        check_devices_ready(list_devices)
+
+        time.sleep(5)
+        restart_adb_server()
+        time.sleep(10)
+        # check_devices_ready(list_devices)
         return list_selected
 
     except subprocess.CalledProcessError as e:
