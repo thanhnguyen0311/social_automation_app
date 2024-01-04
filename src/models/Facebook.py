@@ -20,6 +20,7 @@ class FBAccount:
                  token="",
                  uid="",
                  auth_2fa="",
+                 secure=False,
                  clone_target_uid=""):
         self.facebook_account_id = facebook_account_id
         self.first_name = first_name
@@ -35,6 +36,7 @@ class FBAccount:
         self.uid = uid
         self.clone_target_uid = clone_target_uid
         self.is_deleted = is_deleted
+        self.secure = secure
         self.create_date = create_date
 
     def __str__(self):
@@ -71,7 +73,7 @@ class FBAccount:
 
     @password.setter
     def password(self, value):
-        if 8 <= len(value):
+        if 6 <= len(value):
             self.__password = value
         else:
             raise ValueError(f'Invalid password: {value}')
@@ -88,12 +90,22 @@ class FBAccount:
                 if result:
                     email_id = result[0]
                     device_id = result[7]
-                    insert_query = "INSERT INTO fb_accounts (first_name, last_name, password, device_id, email_id, cookie, token, uid, auth_2fa, clone_target_uid) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                    insert_query = ("INSERT INTO fb_accounts (first_name, last_name, password, device_id, email_id, "
+                                    "cookie, token, uid, auth_2fa, clone_target_uid) VALUES (%s, %s, %s, %s, %s, %s, "
+                                    "%s, %s, %s, %s)")
                     cursor.execute(insert_query,
-                                   (self.first_name, self.last_name, self.password, device_id, email_id, self.cookie, self.token, self.uid, self.auth_2fa, self.clone_target_uid))
+                                   (self.first_name, self.last_name, self.password, device_id, email_id, self.cookie,
+                                    self.token, self.uid, self.auth_2fa, self.clone_target_uid))
 
                 alter_query = "UPDATE emails SET facebook = TRUE where email_address = %s"
                 cursor.execute(alter_query, (email_address,))
+
+            else:
+                insert_query = ("INSERT INTO fb_accounts (first_name, last_name, password, cookie, token, uid, "
+                                "auth_2fa, clone_target_uid) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+                cursor.execute(insert_query,
+                               (self.first_name, self.last_name, self.password, self.cookie, self.token, self.uid,
+                                self.auth_2fa, self.clone_target_uid))
 
             connection.commit()
             cursor.close()

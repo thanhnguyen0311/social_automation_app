@@ -16,26 +16,12 @@ from src.utils.textToKeyCode import text_to_keycodes
 
 
 def register_email(data):
-    print(data.email_address)
-    if data.device.created:
-        time.sleep(15)
-
-    proxy_address = '202.159.35.153'
-    proxy_port = '443'
     desired_cap = {
         "udid": data.device.uuid,
         "platformName": "Android",
         "appPackage": "com.ldmnq.launcher3",
         "appActivity": "com.android.launcher3.Launcher"
-        # 'proxy': {
-        #     'httpProxy': f"{proxy_address}:{proxy_port}",
-        #     'ftpProxy': f"{proxy_address}:{proxy_port}",
-        #     'sslProxy': f"{proxy_address}:{proxy_port}",
-        #     'proxyType': 'MANUAL',
-        # }
     }
-
-
 
     while True:
         try:

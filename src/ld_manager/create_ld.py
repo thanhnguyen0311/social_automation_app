@@ -5,6 +5,8 @@ import os
 import json
 from src.constants.constants import LDPLAYER_PATH, LDCONSOLE_PATH, CLONE_LD_DATA
 from src.models.Device import Device
+from src.models.Email import EmailAccount
+from src.models.Facebook import FBAccount
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -28,8 +30,12 @@ def save_json_file(data, filename, folder):
         json.dump(data, file, indent=2)
 
 
-def create_ld():
-    new_ldplayer = None
+def create_ld(data=None):
+    email_address = None
+    if isinstance(data, FBAccount):
+        email_address = data.email.email_address
+    if isinstance(data, EmailAccount):
+        email_address = data.email_address
     try:
         id_list = []
         file_list = os.listdir(vms_path)
@@ -75,8 +81,7 @@ def create_ld():
         config = {
             "name": name_ld,
             "uuid": f"emulator-{str(5554 + (int(i) * 2))}",
-            "facebook": False,
-            "email": False,
+            "email": email_address,
             "basicSettings.rootMode": True,
             "basicSettings.adbDebug": 2,
             "advancedSettings.resolution": {
@@ -100,7 +105,12 @@ def create_ld():
     return new_ldplayer
 
 
-def clone_ld(device):
+def clone_ld(data):
+    email_address = None
+    if isinstance(data, FBAccount):
+        email_address = data.email.email_address
+    if isinstance(data, EmailAccount):
+        email_address = data.email_address
     try:
         id_list = []
         file_list = os.listdir(vms_path)
@@ -129,20 +139,19 @@ def clone_ld(device):
             name_ld = "LDPlayer"
 
         contents = {
-            "propertySettings.phoneIMEI": device.imei,
-            "propertySettings.phoneIMSI": device.imsi,
-            "propertySettings.phoneSimSerial": device.simSerial,
-            "propertySettings.phoneAndroidId": device.androidId,
-            "propertySettings.phoneModel": device.model,
-            "propertySettings.phoneManufacturer": device.manufacturer,
-            "propertySettings.macAddress": device.macAddress
+            "propertySettings.phoneIMEI": data.device.imei,
+            "propertySettings.phoneIMSI": data.device.imsi,
+            "propertySettings.phoneSimSerial": data.device.simSerial,
+            "propertySettings.phoneAndroidId": data.device.androidId,
+            "propertySettings.phoneModel": data.device.model,
+            "propertySettings.phoneManufacturer": data.device.manufacturer,
+            "propertySettings.macAddress": data.device.macAddress
         }
 
         config = {
             "name": name_ld,
             "uuid": f"emulator-{str(5554 + (int(i) * 2))}",
-            "facebook": "",
-            "email": "",
+            "email": email_address,
             "basicSettings.rootMode": True,
             "basicSettings.adbDebug": 2,
             "advancedSettings.resolution": {
@@ -155,16 +164,16 @@ def clone_ld(device):
             "advancedSettings.memorySize": 1024
         }
 
-        new_LDPlayer = Device(ID=str(i),
-                              name=name_ld,
-                              imei=device.imei,
-                              uuid=f"emulator-{str(5554 + (int(i) * 2))}",
-                              manufacturer=device.manufacturer,
-                              model=device.model,
-                              imsi=device.imsi,
-                              androidId=device.androidId,
-                              simSerial=device.simSerial,
-                              macAddress=device.macAddress)
+        new_ld = Device(ID=str(i),
+                        name=name_ld,
+                        imei=data.device.imei,
+                        uuid=f"emulator-{str(5554 + (int(i) * 2))}",
+                        manufacturer=data.device.manufacturer,
+                        model=data.device.model,
+                        imsi=data.device.imsi,
+                        androidId=data.device.androidId,
+                        simSerial=data.device.simSerial,
+                        macAddress=data.device.macAddress)
 
         # Merge 2 json data
         contents = {**contents, **config}
@@ -174,4 +183,4 @@ def clone_ld(device):
         print(f"Error: {e}")
         return None
 
-    return new_LDPlayer
+    return new_ld

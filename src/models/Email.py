@@ -17,6 +17,7 @@ class EmailAccount:
                  tiktok=False,
                  telegram=False,
                  status=None,
+                 secure=False,
                  is_deleted=False):
         self.email_id = email_id
         self.first_name = first_name
@@ -29,6 +30,7 @@ class EmailAccount:
         self.status = status
         self.tiktok = tiktok
         self.telegram = telegram
+        self.secure = secure
         self.is_deleted = is_deleted
 
     def __str__(self):
@@ -62,6 +64,10 @@ class EmailAccount:
 
     @email_address.setter
     def email_address(self, value):
+        if value.isdigit():
+            self.__email_address = value
+            return
+
         pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         if re.fullmatch(pattern, value):
             self.__email_address = value

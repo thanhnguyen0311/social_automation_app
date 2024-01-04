@@ -15,6 +15,7 @@ class AddFacebookController:
             self.model.cookie = data['cookie']
             self.model.uid = data['uid']
             self.model.token = data['token']
+            self.model.secure = data['secure']
             self.model.clone_target_uid = data['clone_target_uid']
             self.model.save(data['email'])
             self.view.show_success(f'The facebook {data["email"]} added!')

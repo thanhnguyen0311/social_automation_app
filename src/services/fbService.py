@@ -1,6 +1,7 @@
 import requests
 
 from src.connection.mysqlConnection import connect_to_database
+from src.models.Email import EmailAccount
 from src.models.Facebook import FBAccount
 from src.services.deviceService import find_device_by_id
 from src.services.emailService import find_email_by_id
@@ -18,11 +19,21 @@ def get_all_fb_accounts(user_id):
         connection.close()
         fb_accounts = {}
         for row in result:
+            email = ""
+            if row['email_id']:
+                email = find_email_by_id(row['email_id'])
+            else:
+                if row['uid']:
+                    email = EmailAccount(first_name=row['first_name'],
+                                         email_address=row['uid'],
+                                         last_name=row['last_name'],
+                                         password=row['password'])
+
             fb_accounts[row['fb_id']] = FBAccount(facebook_account_id=row['fb_id'],
                                                   first_name=row['first_name'],
                                                   last_name=row['last_name'],
                                                   device=find_device_by_id(row['device_id']),
-                                                  email=find_email_by_id(row['email_id']),
+                                                  email=email,
                                                   password=row['password'],
                                                   last_login=row['last_login'],
                                                   create_date=row['date'],
@@ -32,6 +43,7 @@ def get_all_fb_accounts(user_id):
                                                   token=row['token'],
                                                   auth_2fa=row['auth_2fa'],
                                                   uid=row['uid'],
+                                                  secure=bool(row['secure']),
                                                   clone_target_uid=row['clone_target_uid']
                                                   )
 
@@ -90,3 +102,4 @@ def get_2fa_code(string):
     if response.status_code == 200:
         code = response.json()
         return code['token']
+

@@ -55,6 +55,7 @@ def get_all_emails(user_id):
                                                    is_deleted=bool(row['is_deleted']),
                                                    facebook=bool(row['facebook']),
                                                    tiktok=bool(row['tiktok']),
+                                                   secure=bool(row['secure']),
                                                    telegram=bool(row['telegram'])
                                                    )
 
@@ -124,3 +125,4 @@ def update_email_status(email_id, status):
 
     except Exception as e:
         raise ConnectionError("Could not connect to database") from e
+

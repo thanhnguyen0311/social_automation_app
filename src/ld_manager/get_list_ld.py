@@ -34,15 +34,11 @@ def get_list_ld():
                 ld_players.append(device)
                 continue
 
-            data_fb = data.get('facebook')
             data_email = data.get('email')
-
-            if data_fb is None or data_email is None:
-                data_fb = False
-                data_email = False
 
             device = Device(ID=i,
                             name=name_ld,
+                            email_address=data_email,
                             imei=data["propertySettings.phoneIMEI"],
                             uuid=f"emulator-{5554 + (int(i) * 2)}",
                             manufacturer=data["propertySettings.phoneManufacturer"],

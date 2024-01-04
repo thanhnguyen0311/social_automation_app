@@ -15,7 +15,7 @@ class HomePage(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Social Automation")
-        self.geometry("1200x600")
+        self.geometry("1400x600")
         # self.websocket_client = SocketClient(SERVER_SOCKET, self.display_message)
         self.websocket_client = None
         SideBar(self, self.websocket_client)

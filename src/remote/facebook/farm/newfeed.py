@@ -1,8 +1,17 @@
+import threading
 import time
 
-
+from src.ld_manager.run_ld import run_list_ld
 from src.remote.facebook.login import login_facebook
 from src.utils.randomGenerate import generate_random_true25percent
+
+
+def on_click_new_feed_button(list_account):
+    list_account = run_list_ld(list_account)
+    for account in list_account:
+        account.thread = threading.Thread(target=farm_newFeed, args=(account,))
+        account.thread.start()
+        time.sleep(3)
 
 
 def farm_newFeed(account):
