@@ -20,6 +20,7 @@ class FBAccount:
                  token="",
                  uid="",
                  auth_2fa="",
+                 gender="",
                  secure=False,
                  clone_target_uid=""):
         self.facebook_account_id = facebook_account_id
@@ -32,6 +33,7 @@ class FBAccount:
         self.status = status
         self.cookie = cookie
         self.auth_2fa = auth_2fa
+        self.gender= gender
         self.token = token
         self.uid = uid
         self.clone_target_uid = clone_target_uid
@@ -91,21 +93,21 @@ class FBAccount:
                     email_id = result[0]
                     device_id = result[7]
                     insert_query = ("INSERT INTO fb_accounts (first_name, last_name, password, device_id, email_id, "
-                                    "cookie, token, uid, auth_2fa, clone_target_uid) VALUES (%s, %s, %s, %s, %s, %s, "
-                                    "%s, %s, %s, %s)")
+                                    "cookie, token, uid, auth_2fa, clone_target_uid, gender) VALUES (%s, %s, %s, %s, %s, %s, "
+                                    "%s, %s, %s, %s, %s)")
                     cursor.execute(insert_query,
                                    (self.first_name, self.last_name, self.password, device_id, email_id, self.cookie,
-                                    self.token, self.uid, self.auth_2fa, self.clone_target_uid))
+                                    self.token, self.uid, self.auth_2fa, self.clone_target_uid, self.gender))
 
                 alter_query = "UPDATE emails SET facebook = TRUE where email_address = %s"
                 cursor.execute(alter_query, (email_address,))
 
             else:
                 insert_query = ("INSERT INTO fb_accounts (first_name, last_name, password, cookie, token, uid, "
-                                "auth_2fa, clone_target_uid) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+                                "auth_2fa, clone_target_uid, gender) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
                 cursor.execute(insert_query,
                                (self.first_name, self.last_name, self.password, self.cookie, self.token, self.uid,
-                                self.auth_2fa, self.clone_target_uid))
+                                self.auth_2fa, self.clone_target_uid, self.gender))
 
             connection.commit()
             cursor.close()

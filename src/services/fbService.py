@@ -44,7 +44,8 @@ def get_all_fb_accounts(user_id):
                                                   auth_2fa=row['auth_2fa'],
                                                   uid=row['uid'],
                                                   secure=bool(row['secure']),
-                                                  clone_target_uid=row['clone_target_uid']
+                                                  clone_target_uid=row['clone_target_uid'],
+                                                  gender=row['gender']
                                                   )
 
         return fb_accounts

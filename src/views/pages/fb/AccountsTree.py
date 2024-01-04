@@ -8,7 +8,7 @@ from src.services.fbService import get_all_fb_accounts, remove_fb_accounts
 
 class FBAccountsList(ttk.Treeview):
     def __init__(self, master, show_checkpoint, show_insecure):
-        ttk.Treeview.__init__(self, master, columns=("ID", "Name", "email", "password",
+        ttk.Treeview.__init__(self, master, columns=("ID", "Name", "email",
                                                      "device", "last_login",
                                                      "create_date", "live", "status"),
                               show="headings", selectmode="extended")
@@ -23,7 +23,6 @@ class FBAccountsList(ttk.Treeview):
         self.heading("ID", text="ID")
         self.heading("Name", text="Name")
         self.heading("email", text="Email")
-        self.heading("password", text="Password")
         self.heading("device", text="Device")
         self.heading("last_login", text="Last login")
         self.heading("create_date", text="Create date")
@@ -33,7 +32,6 @@ class FBAccountsList(ttk.Treeview):
         self.column("ID", width=5, anchor='center')
         self.column("Name", width=50, anchor='center')
         self.column("email", width=120, anchor='center')
-        self.column("password", width=80, anchor='center')
         self.column("device", width=70, anchor='center')
         self.column("last_login", width=50, anchor='center')
         self.column("create_date", width=50, anchor='center')
@@ -96,7 +94,6 @@ class FBAccountsList(ttk.Treeview):
                         values=(ID,
                                 account.first_name + " " + account.last_name,
                                 email_address,
-                                "*************",
                                 device_imei,
                                 account.last_login,
                                 account.create_date,
