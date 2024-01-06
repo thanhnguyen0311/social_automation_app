@@ -1,57 +1,52 @@
-import subprocess
 from src.constants.constants import LDPLAYER_PATH
 import sys
 import os
 
-from src.ld_manager.create_ld import open_file
 from src.models.Device import Device
+from src.models.ListDevices import ListDevices
+from src.utils.fileUtils import open_file
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 
 def get_list_ld():
-    ld_players = []
     vms_path = os.path.join(LDPLAYER_PATH, "vms")
     config_path = os.path.join(LDPLAYER_PATH, "vms", "config")
-    try:
-        id_list = []
-        file_list = os.listdir(vms_path)
-        for file in file_list:
-            if file[:7] == "leidian":
-                id_list.append(file[7:])
+    file_list = os.listdir(vms_path)
+    ListDevices.ld_list = {}
+    list_index = []
+    for file in file_list:
+        if file[:7] == "leidian":
+            if int(file[7:]) == 0:
+                continue
+            list_index.append(int(file[7:]))
+            continue
+
+    for index in sorted(list_index):
+        try:
+            data = open_file(f'leidian{index}.config', config_path)
+            data_email = data.get('statusSettings.playerName')
+            if data_email:
+                name = data_email
+                email_address = data_email
             else:
-                continue
+                name = f"LDPlayer-{index}"
+                email_address = None
 
-        for i in id_list:
-            name_ld = f"LDPlayer-{i}"
-            if int(i) == 0:
-                name_ld = "LDPlayer"
-
-            try:
-                data = open_file(f'leidian{i}.config', config_path)
-            except FileNotFoundError:
-                device = Device(ID=i, name=name_ld, uuid=f"emulator-{5554 + (int(i) * 2)}")
-                ld_players.append(device)
-                continue
-
-            data_email = data.get('email')
-
-            device = Device(ID=i,
-                            name=name_ld,
-                            email_address=data_email,
+            device = Device(ID=index,
+                            name=name,
+                            email_address=email_address,
                             imei=data["propertySettings.phoneIMEI"],
-                            uuid=f"emulator-{5554 + (int(i) * 2)}",
                             manufacturer=data["propertySettings.phoneManufacturer"],
                             model=data["propertySettings.phoneModel"],
                             imsi=data["propertySettings.phoneIMSI"],
                             androidId=data["propertySettings.phoneAndroidId"],
                             simSerial=data["propertySettings.phoneSimSerial"],
-                            macAddress=data["propertySettings.macAddress"])
+                            macAddress=data["propertySettings.macAddress"],
+                            is_ready=True)
+            ListDevices.ld_list[index] = device
 
-            ld_players.append(device)
-
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
-        return None
-
-    return ld_players
+        except FileNotFoundError:
+            ListDevices.ld_list[index] = None
+            continue
+    return ListDevices.ld_list

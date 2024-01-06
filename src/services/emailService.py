@@ -4,8 +4,7 @@ from src.connection.mysqlConnection import connect_to_database
 from src.enum.EmailEnum import EmailEnum
 from src.models.Email import EmailAccount
 from src.services.deviceService import find_device_by_id
-from src.utils.randomGenerate import generate_random_digit_string, generate_random_password, \
-    generate_random_email_password
+from src.utils.randomGenerate import generate_random_digit_string, generate_random_email_password
 
 
 def find_email_by_id(email_id):
@@ -17,16 +16,18 @@ def find_email_by_id(email_id):
         result = cursor.fetchone()
         cursor.close()
         connect.close()
+        if result['device_id']:
+            device = find_device_by_id(result['device_id'], result['email_address'])
+        else:
+            device = None
+
         email = EmailAccount(email_id=result['email_id'],
                              first_name=result['first_name'],
                              last_name=result['last_name'],
                              email_address=result['email_address'],
-                             device=find_device_by_id(result['device_id']),
+                             device=device,
                              password=result['password'],
                              create_date=result['create_date'])
-        if result['device_id']:
-            device = find_device_by_id(result['device_id'])
-            email.device = device
         return email
 
     except Exception as e:
@@ -44,11 +45,16 @@ def get_all_emails(user_id):
         connection.close()
         emails = {}
         for row in result:
+            if 'device_id' in row:
+                device = find_device_by_id(row['device_id'], email_address=row['email_address'])
+            else:
+                device = None
+            email_address = row['email_address']
             emails[row['email_id']] = EmailAccount(email_id=row['email_id'],
                                                    first_name=row['first_name'],
                                                    last_name=row['last_name'],
-                                                   device=find_device_by_id(row['device_id']),
-                                                   email_address=row['email_address'],
+                                                   device=device,
+                                                   email_address=email_address,
                                                    password=row['password'],
                                                    create_date=row['create_date'],
                                                    status=row['status'],
@@ -62,18 +68,19 @@ def get_all_emails(user_id):
         return emails
 
     except Exception as e:
-        raise ConnectionError("Could not connect to database") from e
+        raise ConnectionError(f"Could not connect to database : {e}") from e
 
 
-def remove_email(email_id):
+def remove_email(email):
     try:
         connection = connect_to_database()
         cursor = connection.cursor(dictionary=True)
         alter_query = "UPDATE emails SET is_deleted = 1 WHERE email_id = %s"
-        cursor.execute(alter_query, (email_id,))
+        cursor.execute(alter_query, (email.email_id,))
         connection.commit()
         cursor.close()
         connection.close()
+
         return True
 
     except Exception as e:
@@ -125,4 +132,3 @@ def update_email_status(email_id, status):
 
     except Exception as e:
         raise ConnectionError("Could not connect to database") from e
-

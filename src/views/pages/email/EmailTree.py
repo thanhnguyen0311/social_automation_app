@@ -155,7 +155,8 @@ class MailList(ttk.Treeview):
         return list_email
 
     def remove_accounts(self):
-        for item in self.selection():
-            if remove_email(item) is True:
-                print("Deleted account id {0}".format(item))
+        list_email = self.get_selected()
+        for email in list_email:
+            if remove_email(email) is True:
+                print("Deleted account id {0}".format(email.email_address))
         self.on_refresh_clicked()

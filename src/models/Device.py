@@ -1,13 +1,17 @@
-from datetime import datetime
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 
 class Device:
-    def __init__(self, ID, name="", email_address='', uuid='', imei="", manufacturer="", model="", imsi="", androidId="", simSerial="",
-                 macAddress="",  create_date=""):
+    def __init__(self, ID=None, email_address='', imei="", manufacturer="",
+                 model="", imsi="", androidId="", simSerial="", name=None,
+                 macAddress="", create_date="", is_ready=False, is_running=False):
         self.ID = ID
-        self.name = name
+        self.name = name if name is not None else email_address
         self.email_address = email_address
-        self.uuid = uuid
+        self.uuid = f"emulator-{5554 + (int(self.ID) * 2)}" if ID is not None else None
         self.imei = imei
         self.manufacturer = manufacturer
         self.model = model
@@ -16,3 +20,6 @@ class Device:
         self.simSerial = simSerial
         self.macAddress = macAddress
         self.create_date = create_date
+        self.thread = None
+        self.is_ready = is_ready
+        self.is_running = is_running

@@ -1,20 +1,19 @@
 import threading
-import time
 import tkinter as tk
 from tkinter import ttk
 
 from src.enum.farmEnum import FarmEnum
 from src.enum.taskEnum import TaskEnum
-from src.ld_manager.run_ld import run_list_ld
-from src.remote.facebook.farm.newfeed import farm_newFeed, on_click_new_feed_button
-from src.remote.facebook.login import login_facebook, on_click_login_button
+from src.models.ListDevices import ListDevices
+from src.models.Task import Task
+from src.services.taskService import FacebookTask
 from src.views.pages.fb.AccountsTree import FBAccountsList
 from src.views.pages.fb.AddPopup import AddFacebookAccount
 
 
 class FBManager(tk.Toplevel):
-    def __init__(self, master, *args, **kwargs):
-        tk.Toplevel.__init__(self, *args, **kwargs, bg='lightblue')
+    def __init__(self, master):
+        tk.Toplevel.__init__(self, bg='lightblue')
         self.title("Facebook Service")
         self.geometry("1200x600")
         self.show_checkpoint = tk.BooleanVar()
@@ -94,22 +93,13 @@ class FBManager(tk.Toplevel):
         list_account = self.fb_account_list.get_selected()
 
         if selected_option == TaskEnum.LOGIN.value:
-            threading.Thread(target=on_click_login_button, args=(list_account,)).start()
+            ListDevices.add_task(Task(function=FacebookTask.login,
+                                      args=(list_account,),
+                                      name="Starting Task : Login accounts"))
         if selected_farm_option == FarmEnum.NEW_FEED.value:
-            threading.Thread(target=on_click_new_feed_button, args=(list_account,)).start()
-
-        # list_account = run_list_ld(list_account)
-        # if selected_option == TaskEnum.LOGIN.value:
-        #     for account in list_account:
-        #         account.thread = threading.Thread(target=login_facebook, args=(account,))
-        #         account.thread.start()
-        #         time.sleep(3)
-
-        # if selected_farm_option == FarmEnum.NEW_FEED.value:
-        #     for account in list_account:
-        #         account.thread = threading.Thread(target=farm_newFeed, args=(account,))
-        #         account.thread.start()
-        #         time.sleep(3)
+            ListDevices.add_task(Task(function=FacebookTask.farm_new_feed,
+                                      args=(list_account,),
+                                      name="Starting Task : Login and farm new feed accounts"))
 
     def choose_popup(self, popup):
         if popup == AddFacebookAccount:

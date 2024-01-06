@@ -1,5 +1,3 @@
-import threading
-
 from appium import webdriver
 import time
 
@@ -8,20 +6,9 @@ from selenium.webdriver.common.by import By
 from urllib3.exceptions import MaxRetryError
 
 from src.enum.checkpoints import LoginEnum
-from src.ld_manager.adb_shells import find_package_running
-from src.ld_manager.reboot_ld import reboot_ld
-from src.ld_manager.run_ld import run_list_ld
 from src.services.fbService import update_last_login, update_account_status, get_2fa_code
 from src.utils.findText import find_text_in_screenshot
 from src.utils.imageUtils import capture_checkpoint
-
-
-def on_click_login_button(list_account):
-    list_account = run_list_ld(list_account)
-    for account in list_account:
-        account.thread = threading.Thread(target=login_facebook, args=(account,))
-        account.thread.start()
-        time.sleep(3)
 
 
 def login_facebook(data):
@@ -180,3 +167,22 @@ def pass_login_checkpoint(driver, data):
             continue
 
         break
+
+# desired_cap = {
+#         "udid": "emulator-5572",
+#         "platformName": "Android",
+#         "appPackage": "com.ldmnq.launcher3",
+#         "appActivity": "com.android.launcher3.Launcher"
+#     }
+#
+# driver = webdriver.Remote("http://localhost:4723/wd/hub", desired_cap)
+# driver.implicitly_wait(30)
+#
+# # if not find_package_running("com.facebook.katana", data.device):
+# driver.find_element(By.XPATH, '//android.widget.TextView[@content-desc="Facebook"]').click()
+#
+# element = driver.find_element(By.XPATH,
+#                               '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
+# element.click()
+#
+# subprocess.run([LDCONSOLE_PATH] + ["action", "--name", "LDPlayer-9", "--key", "call.input", "--value", "Y4gRUSu6g341Q4k"])

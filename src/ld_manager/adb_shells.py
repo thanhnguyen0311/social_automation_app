@@ -8,13 +8,15 @@ from src.constants.constants import LDCONSOLE_PATH
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 
-def restart_adb_server():
+def restart_adb_server(count=None):
     try:
-        time.sleep(5)
         subprocess.run(["adb", "kill-server"], check=True)
-        time.sleep(5)
+        time.sleep(2)
         subprocess.run(["adb", "start-server"], check=True)
-        time.sleep(5)
+        time.sleep(30)
+        if int(count) > 10:
+            time.sleep(30)
+
 
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
@@ -31,6 +33,14 @@ def find_package_running(package, device):
         for pkg in packages:
             if pkg.strip() == f'package:{package}':
                 return True
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+
+
+def input_text_device(text, device):
+    try:
+        subprocess.run([LDCONSOLE_PATH] + ["action", "--name", device.name, "--key", "call.input", "--value", text])
 
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")

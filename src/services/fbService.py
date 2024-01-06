@@ -19,7 +19,7 @@ def get_all_fb_accounts(user_id):
         connection.close()
         fb_accounts = {}
         for row in result:
-            email = ""
+            email = None
             if row['email_id']:
                 email = find_email_by_id(row['email_id'])
             else:
@@ -29,10 +29,11 @@ def get_all_fb_accounts(user_id):
                                          last_name=row['last_name'],
                                          password=row['password'])
 
+            device = find_device_by_id(row['device_id'], email.email_address)
             fb_accounts[row['fb_id']] = FBAccount(facebook_account_id=row['fb_id'],
                                                   first_name=row['first_name'],
                                                   last_name=row['last_name'],
-                                                  device=find_device_by_id(row['device_id']),
+                                                  device=device,
                                                   email=email,
                                                   password=row['password'],
                                                   last_login=row['last_login'],
@@ -103,4 +104,3 @@ def get_2fa_code(string):
     if response.status_code == 200:
         code = response.json()
         return code['token']
-

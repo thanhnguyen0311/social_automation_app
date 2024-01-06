@@ -1,4 +1,3 @@
-import re
 from datetime import datetime
 
 from src.connection.mysqlConnection import connect_to_database

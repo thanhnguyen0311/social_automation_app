@@ -2,17 +2,14 @@ import random
 import time
 
 from appium import webdriver
-from appium.webdriver.common.mobileby import MobileBy
 from selenium.common.exceptions import WebDriverException
-from selenium.webdriver import ActionChains
 
 from src.enum.EmailEnum import EmailEnum
+from src.ld_manager.adb_shells import input_text_device
 from src.services.emailService import update_email_status
 from src.utils.findText import get_email_type, find_text_in_screenshot
 from selenium.webdriver.common.by import By
 from urllib3.exceptions import MaxRetryError
-
-from src.utils.textToKeyCode import text_to_keycodes
 
 
 def register_email(data):
@@ -66,7 +63,7 @@ def register_hotmail(driver, data):
                         '//android.view.View[@content-desc="Create a Microsoft account"]/android.widget.TextView').click()
 
     time.sleep(8)
-    text_to_keycodes(data.email_address, driver)
+    input_text_device(data.email_address, data.device)
 
     check = True
 
@@ -94,7 +91,7 @@ def register_hotmail(driver, data):
             break
 
     time.sleep(5)
-    text_to_keycodes(data.password, driver)
+    input_text_device(data.password, data.device)
     time.sleep(10)
 
     time.sleep(1)
@@ -111,13 +108,13 @@ def register_hotmail(driver, data):
     driver.press_keycode(66)
 
     time.sleep(5)
-    text_to_keycodes(data.first_name, driver)
+    input_text_device(data.first_name, data.device)
 
     time.sleep(1)
     driver.press_keycode(61)
 
     time.sleep(3)
-    text_to_keycodes(data.last_name, driver)
+    input_text_device(data.last_name, data.device)
 
     time.sleep(1)
     driver.press_keycode(61)
@@ -143,7 +140,7 @@ def register_hotmail(driver, data):
     time.sleep(3)
     driver.press_keycode(61)
     time.sleep(1)
-    text_to_keycodes(str(random.randint(1989, 2002)), driver)
+    input_text_device(str(random.randint(1989, 2002)), data.device)
 
     time.sleep(3)
     driver.press_keycode(61)

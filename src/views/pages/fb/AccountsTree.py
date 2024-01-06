@@ -54,7 +54,7 @@ class FBAccountsList(ttk.Treeview):
 
         col = self.identify_column(event.x)
         item_iid = self.identify_row(event.y)
-        if col == '#5':
+        if col == '#4':
             if item_iid and self.data[int(item_iid)].device:
                 self.show_device_hint(event, self.data[int(item_iid)])
 
