@@ -70,14 +70,20 @@ class LoginFacebook(Driver):
 
             except WebDriverException as e:
                 if not self.is_running:
-                    super().__quit__()
                     return
+                if find_text_in_screenshot(self.driver, "System UI"):
+                    self.driver.find_element(By.XPATH,
+                                             '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout'
+                                             '/android.widget.FrameLayout/android.widget.LinearLayout/android.widget'
+                                             '.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout'
+                                             '/android.widget.Button[1]').click()
+                    self.__run__()
+                    continue
                 print(f"Error: {e}")
                 continue
 
             except Exception as e:
                 if not self.is_running:
-                    super().__quit__()
                     return
                 time.sleep(10)
                 continue
@@ -91,11 +97,19 @@ class LoginFacebook(Driver):
                     find_text_in_screenshot(self.driver, "Waiting for approval")):
                 super().__find_element__(xpath='//android.view.View[@content-desc="Try another way"]').click()
                 super().__find_element__(xpath=
-                                         '//android.widget.RadioButton[@content-desc="Authentication app, Get a code from the app you set up."]').click()
+                                         '//android.widget.RadioButton[@content-desc="Authentication app, Get a code '
+                                         'from the app you set up."]').click()
                 super().__find_element__(xpath=
                                          '//android.widget.Button[@content-desc="Continue"]/android.view.ViewGroup').click()
                 element = super().__find_element__(xpath=
-                                                   '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout[2]/android.widget.FrameLayout[1]/android.view.ViewGroup/android.view.ViewGroup/android.view.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
+                                                   '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout'
+                                                   '/android.widget.FrameLayout/android.widget.FrameLayout/android'
+                                                   '.widget.FrameLayout/android.widget.FrameLayout/android.widget'
+                                                   '.FrameLayout[2]/android.widget.FrameLayout['
+                                                   '1]/android.view.ViewGroup/android.view.ViewGroup/android.view'
+                                                   '.ViewGroup/androidx.recyclerview.widget.RecyclerView/android.view'
+                                                   '.ViewGroup[2]/android.view.ViewGroup/android.view.ViewGroup['
+                                                   '2]/android.view.ViewGroup/android.view.ViewGroup/android.widget.EditText')
                 element.click()
                 element.send_keys(get_2fa_code(self.data.auth_2fa))
 
@@ -110,7 +124,9 @@ class LoginFacebook(Driver):
 
             if find_text_in_screenshot(self.driver, "Something went wrong"):
                 super().__find_element__(xpath=
-                                         '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]').click()
+                                         '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
+                                         '.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout'
+                                         '/android.widget.LinearLayout/android.widget.Button[2]').click()
                 continue
 
             if find_text_in_screenshot(self.driver, "Are you sure want to skip"):

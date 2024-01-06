@@ -7,9 +7,11 @@ class Task:
         self.args = args if args is not None else []
 
     def execute(self):
+        self.is_running = True
         self.function(*self.args)
 
     def __stop__(self):
         for account in self.list_account:
-            account.task.__stop__()
+            if account.task is not None:
+                account.task.__stop__()
         self.is_running = False

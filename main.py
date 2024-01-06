@@ -1,5 +1,4 @@
 import tkinter as tk
-import warnings
 from src.views.layouts.SideBar import SideBar
 
 

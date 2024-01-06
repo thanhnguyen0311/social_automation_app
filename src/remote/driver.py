@@ -1,8 +1,9 @@
+import time
+
 from appium import webdriver
 from selenium.webdriver.common.by import By
 
 from src.ld_manager.quit_ld import quit_ld
-from src.remote.setup import driver
 from src.utils.findText import find_text_in_screenshot
 
 
@@ -24,11 +25,12 @@ class Driver:
         return self.driver
 
     def __find_element__(self, xpath=None):
-        if not self.is_running:
-            self.__quit__()
+        time.sleep(1)
+        if find_text_in_screenshot(self.driver, "access your contacts"):
+            self.driver.find_element(By.XPATH,'/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]').click()
 
-        if find_text_in_screenshot(self.driver, "System UI isn't responding"):
-            driver.find_element(By.XPATH,
+        if find_text_in_screenshot(self.driver, "System UI"):
+            self.driver.find_element(By.XPATH,
                                 '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.Button[1]').click()
             self.__run__()
 
@@ -38,8 +40,7 @@ class Driver:
 
     def __stop__(self):
         self.is_running = False
-
-    def __quit__(self):
         self.driver.quit()
         quit_ld(self.data.device)
         self.data.device.is_running = False
+

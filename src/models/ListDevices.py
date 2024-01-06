@@ -24,7 +24,6 @@ class ListDevices:
         while ListDevices.is_running:
             if not ListDevices.tasks.empty():
                 task = ListDevices.tasks.get()
-                task.is_running = True
                 if task.name is not None:
                     print(f"Executing task: {task.name}")
                 task.execute()

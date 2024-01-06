@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
-from src.enum.farmEnum import FarmEnum
-from src.enum.taskEnum import TaskEnum
+from src.enum.FBTaskEnum import FBTaskEnum
 from src.models.ListDevices import ListDevices
 from src.models.tasks.FBTask import FacebookTask
 from src.views.pages.fb.AccountsTree import FBAccountsList
@@ -52,34 +51,22 @@ class FBManager(tk.Toplevel):
         button_remove.grid(row=0, column=3, padx=5)
 
         self.option = tk.StringVar()
-        self.option.set(TaskEnum.NO_ACTION.value)
+        self.option.set(FBTaskEnum.NO_ACTION.value)
         option_menu = ttk.Combobox(button_frame,
                                    textvariable=self.option,
-                                   values=[option.value for option in TaskEnum])
-        option_menu.grid(row=1, column=0, columnspan=2,
+                                   width=20,
+                                   height=20,
+                                   font="Verdana 8 bold",
+                                   values=[option.value for option in FBTaskEnum])
+        option_menu.grid(row=1, column=0, columnspan=3,
                          padx=5, pady=10, sticky=tk.NSEW)
 
         button_action = tk.Button(button_frame,
                                   text="RUN",
                                   width=10, height=1,
                                   command=self.on_option_selected)
-        button_action.grid(row=1, column=2,
+        button_action.grid(row=1, column=3,
                            padx=5, pady=10, sticky=tk.W)
-
-        self.option_farm = tk.StringVar()
-        self.option_farm.set(FarmEnum.NO_ACTION.value)
-        option_farm_menu = ttk.Combobox(button_frame,
-                                        textvariable=self.option_farm,
-                                        values=[option.value for option in FarmEnum])
-        option_farm_menu.grid(row=2, column=0, columnspan=2,
-                              padx=5, pady=10, sticky=tk.NSEW)
-
-        button_farm = tk.Button(button_frame,
-                                text="RUN",
-                                width=10, height=1,
-                                command=self.on_option_selected)
-        button_farm.grid(row=2, column=2,
-                         padx=5, pady=10, sticky=tk.W)
 
         self.fb_account_list.pack(padx=10, pady=5,
                                   fill=tk.BOTH, expand=True)
@@ -97,23 +84,24 @@ class FBManager(tk.Toplevel):
 
     def on_option_selected(self):
         selected_option = self.option.get()
-        selected_farm_option = self.option_farm.get()
         list_account = self.fb_account_list.get_selected()
 
         task = FacebookTask(function="",
                             args=None,
                             list_account=list_account,
                             name="")
+        task_mapping = {
+            FBTaskEnum.LOGIN: task.login,
+            FBTaskEnum.REGISTER: task.register,
+            FBTaskEnum.NEW_FEED: task.farm_new_feed,
+        }
+        selected_enum = FBTaskEnum(selected_option)
 
-        if selected_option == TaskEnum.LOGIN.value:
-            task.name = "Login to Facebook"
-            task.function = task.login
-            ListDevices.add_task(task)
+        if selected_enum in task_mapping:
+            task.name = selected_enum.value
+            task.function = task_mapping[selected_enum]
 
-        if selected_farm_option == FarmEnum.NEW_FEED.value:
-            task.name = "Login Facebook and Farm New Feed"
-            task.function = task.farm_new_feed
-            ListDevices.add_task(task)
+        ListDevices.add_task(task)
 
     def choose_popup(self, popup):
         if popup == AddFacebookAccount:

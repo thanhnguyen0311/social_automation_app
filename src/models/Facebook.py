@@ -34,7 +34,7 @@ class FBAccount:
         self.status = status
         self.cookie = cookie
         self.auth_2fa = auth_2fa
-        self.gender= gender
+        self.gender = gender
         self.token = token
         self.uid = uid
         self.clone_target_uid = clone_target_uid
