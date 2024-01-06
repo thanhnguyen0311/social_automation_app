@@ -18,13 +18,15 @@ class EmailAccount:
                  telegram=False,
                  status=None,
                  secure=False,
-                 is_deleted=False):
+                 is_deleted=False,
+                 task=None):
         self.email_id = email_id
         self.first_name = first_name
         self.last_name = last_name
         self.email_address = email_address
         self.password = password
         self.create_date = create_date
+        self.task = task
         self.device = device
         self.facebook = facebook
         self.status = status

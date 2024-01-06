@@ -17,8 +17,7 @@ from src.models.ListDevices import ListDevices
 from src.utils.fileUtils import rename_folder, save_json_file
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-warnings.filterwarnings("ignore", message=r"\[Deprecated\] Please use 'find_element' with "
-                                          r"'AppiumBy.ANDROID_UIAUTOMATOR' instead\.")
+warnings.filterwarnings("ignore", message=r"\[Deprecated\] Please use 'find_element' with 'AppiumBy.ANDROID_UIAUTOMATOR' instead\.")
 
 
 def find_device_by_id(device_id, email_address=""):

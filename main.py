@@ -1,8 +1,5 @@
 import tkinter as tk
-
-from src.ld_manager.get_list_ld import get_list_ld
-from src.models.ListDevices import ListDevices
-from src.models.Task import Task
+import warnings
 from src.views.layouts.SideBar import SideBar
 
 
@@ -34,4 +31,3 @@ class HomePage(tk.Tk):
 if __name__ == '__main__':
     app = HomePage()
     app.mainloop()
-

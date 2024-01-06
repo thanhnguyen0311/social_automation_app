@@ -3,7 +3,7 @@ from tkinter import ttk
 
 from src.enum.EmailEnum import EmailActionEnum
 from src.models.ListDevices import ListDevices
-from src.models.Task import Task
+from src.models.tasks.Task import Task
 from src.services.deviceService import run_account_devices
 from src.views.pages.email.AddPopup import AddEmail
 from src.views.pages.email.EmailTree import MailList

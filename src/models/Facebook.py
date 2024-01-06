@@ -21,13 +21,15 @@ class FBAccount:
                  auth_2fa="",
                  gender="",
                  secure=False,
-                 clone_target_uid=""):
+                 clone_target_uid="",
+                 task=None):
         self.facebook_account_id = facebook_account_id
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.password = password
         self.device = device
+        self.task = task
         self.last_login = last_login
         self.status = status
         self.cookie = cookie

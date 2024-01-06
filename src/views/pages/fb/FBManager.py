@@ -1,12 +1,10 @@
-import threading
 import tkinter as tk
 from tkinter import ttk
 
 from src.enum.farmEnum import FarmEnum
 from src.enum.taskEnum import TaskEnum
 from src.models.ListDevices import ListDevices
-from src.models.Task import Task
-from src.services.taskService import FacebookTask
+from src.models.tasks.FBTask import FacebookTask
 from src.views.pages.fb.AccountsTree import FBAccountsList
 from src.views.pages.fb.AddPopup import AddFacebookAccount
 
@@ -46,6 +44,12 @@ class FBManager(tk.Toplevel):
                                   width=10, height=1,
                                   command=lambda: self.fb_account_list.remove_accounts())
         button_remove.grid(row=0, column=2, padx=5)
+
+        button_remove = tk.Button(button_frame,
+                                  text="CLOSE",
+                                  width=10, height=1,
+                                  command=self.close_task)
+        button_remove.grid(row=0, column=3, padx=5)
 
         self.option = tk.StringVar()
         self.option.set(TaskEnum.NO_ACTION.value)
@@ -87,19 +91,29 @@ class FBManager(tk.Toplevel):
         self.destroy()
         self.is_open = False
 
+    def close_task(self):
+        ListDevices.cancel_current_task()
+        pass
+
     def on_option_selected(self):
         selected_option = self.option.get()
         selected_farm_option = self.option_farm.get()
         list_account = self.fb_account_list.get_selected()
 
+        task = FacebookTask(function="",
+                            args=None,
+                            list_account=list_account,
+                            name="")
+
         if selected_option == TaskEnum.LOGIN.value:
-            ListDevices.add_task(Task(function=FacebookTask.login,
-                                      args=(list_account,),
-                                      name="Starting Task : Login accounts"))
+            task.name = "Login to Facebook"
+            task.function = task.login
+            ListDevices.add_task(task)
+
         if selected_farm_option == FarmEnum.NEW_FEED.value:
-            ListDevices.add_task(Task(function=FacebookTask.farm_new_feed,
-                                      args=(list_account,),
-                                      name="Starting Task : Login and farm new feed accounts"))
+            task.name = "Login Facebook and Farm New Feed"
+            task.function = task.farm_new_feed
+            ListDevices.add_task(task)
 
     def choose_popup(self, popup):
         if popup == AddFacebookAccount:

@@ -8,7 +8,6 @@ from src.ld_manager.remove_ld import remove_ld
 from src.ld_manager.run_ld import run_ld
 from src.ld_manager.sort_ld import sort_ld
 from src.models.ListDevices import ListDevices
-from src.models.Task import Task
 from src.services.deviceService import create_device
 
 
