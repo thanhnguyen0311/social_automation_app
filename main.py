@@ -1,9 +1,5 @@
 import tkinter as tk
-import asyncio
-
-from src.services.socketService import SocketClient
 from src.views.layouts.SideBar import SideBar
-from src.constants.constants import SERVER_SOCKET
 
 
 class Login(tk.Tk):
@@ -14,8 +10,9 @@ class Login(tk.Tk):
 class HomePage(tk.Tk):
     def __init__(self):
         super().__init__()
+        # ListDevices.add_task(Task(function=get_list_ld, name="GET ALL DEVICES"))
         self.title("Social Automation")
-        self.geometry("1200x600")
+        self.geometry("1400x600")
         # self.websocket_client = SocketClient(SERVER_SOCKET, self.display_message)
         self.websocket_client = None
         SideBar(self, self.websocket_client)

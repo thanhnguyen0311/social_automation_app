@@ -40,10 +40,10 @@ class AddFacebookAccount(tk.Toplevel):
         email_list.grid(row=0, column=1, columnspan=4,
                         padx=5, pady=10, sticky=tk.NSEW)
 
-        tk.Label(self, text="Password: ", font=("Helvetica", 10), bg='lightblue').grid(row=1, column=0, sticky=tk.W,
+        tk.Label(self, text="Password: ", font=("Arial", 10), bg='lightblue').grid(row=1, column=0, sticky=tk.W,
                                                                                        pady=5)
         self.password_var = tk.StringVar()
-        self.password_entry = ttk.Entry(self, textvariable=self.password_var, width=20, font=("Helvetica", 11))
+        self.password_entry = ttk.Entry(self, textvariable=self.password_var, width=20, font=("Arial", 11))
         self.password_entry.grid(row=1, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
         tk.Button(self,
                   text="Generate",
@@ -51,65 +51,72 @@ class AddFacebookAccount(tk.Toplevel):
 
         tk.Label(self,
                  text="First Name: ",
-                 font=("Helvetica", 10),
+                 font=("Arial", 10),
                  bg='lightblue').grid(row=2, column=0, sticky=tk.W, pady=5)
 
         self.first_name_var = tk.StringVar()
-        self.first_name_entry = ttk.Entry(self, textvariable=self.first_name_var, width=9, font=("Helvetica", 11))
+        self.first_name_entry = ttk.Entry(self, textvariable=self.first_name_var, width=9, font=("Arial", 11))
         self.first_name_entry.grid(row=2, column=1, sticky=tk.NSEW, pady=5)
 
         tk.Label(self,
                  text="Last Name: ",
-                 font=("Helvetica", 10),
+                 font=("Arial", 10),
                  bg='lightblue').grid(row=2, column=3, sticky=tk.N, pady=5)
         self.last_name_var = tk.StringVar()
-        self.last_name_entry = ttk.Entry(self, textvariable=self.last_name_var, width=9, font=("Helvetica", 11))
+        self.last_name_entry = ttk.Entry(self, textvariable=self.last_name_var, width=9, font=("Arial", 11))
         self.last_name_entry.grid(row=2, column=4, sticky=tk.NSEW, pady=5)
 
-        tk.Label(self, text="Token: ", font=("Helvetica", 10), bg='lightblue').grid(row=3, column=0, sticky=tk.W,
+        tk.Label(self, text="Token: ", font=("Arial", 10), bg='lightblue').grid(row=3, column=0, sticky=tk.W,
                                                                                     pady=5)
         self.token_var = tk.StringVar()
-        self.token_entry = ttk.Entry(self, textvariable=self.token_var, width=20, font=("Helvetica", 11))
+        self.token_entry = ttk.Entry(self, textvariable=self.token_var, width=20, font=("Arial", 11))
         self.token_entry.grid(row=3, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
 
-        tk.Label(self, text="2FA: ", font=("Helvetica", 10), bg='lightblue').grid(row=4, column=0, sticky=tk.W,
+        tk.Label(self, text="2FA: ", font=("Arial", 10), bg='lightblue').grid(row=4, column=0, sticky=tk.W,
                                                                                   pady=5)
         self.auth2fa_var = tk.StringVar()
-        self.auth2fa_entry = ttk.Entry(self, textvariable=self.auth2fa_var, width=20, font=("Helvetica", 11))
+        self.auth2fa_entry = ttk.Entry(self, textvariable=self.auth2fa_var, width=20, font=("Arial", 11))
         self.auth2fa_entry.grid(row=4, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
 
-        tk.Label(self, text="UID: ", font=("Helvetica", 10), bg='lightblue').grid(row=5, column=0, sticky=tk.W,
+        tk.Label(self, text="UID: ", font=("Arial", 10), bg='lightblue').grid(row=5, column=0, sticky=tk.W,
                                                                                   pady=5)
         self.uid_var = tk.StringVar()
-        self.uid_entry = ttk.Entry(self, textvariable=self.uid_var, width=20, font=("Helvetica", 11))
+        self.uid_entry = ttk.Entry(self, textvariable=self.uid_var, width=20, font=("Arial", 11))
         self.uid_entry.grid(row=5, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
 
-        tk.Label(self, text="Cookie: ", font=("Helvetica", 10), bg='lightblue').grid(row=6, column=0, sticky=tk.W,
+        tk.Label(self, text="Cookie: ", font=("Arial", 10), bg='lightblue').grid(row=6, column=0, sticky=tk.W,
                                                                                      pady=5)
         self.cookie_var = tk.StringVar()
-        self.cookie_entry = ttk.Entry(self, textvariable=self.cookie_var, width=20, font=("Helvetica", 11))
+        self.cookie_entry = ttk.Entry(self, textvariable=self.cookie_var, width=20, font=("Arial", 11))
         self.cookie_entry.grid(row=6, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
 
-        tk.Label(self, text="Clone Target UID: ", font=("Helvetica", 10), bg='lightblue').grid(row=7, column=0,
+        tk.Label(self, text="Clone Target UID: ", font=("Arial", 10), bg='lightblue').grid(row=7, column=0,
                                                                                                sticky=tk.W,
                                                                                                pady=5)
         self.clone_uid_var = tk.StringVar()
-        self.clone_uid_entry = ttk.Entry(self, textvariable=self.clone_uid_var, width=20, font=("Helvetica", 11))
-        self.clone_uid_entry.grid(row=7, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
+        self.clone_uid_entry = ttk.Entry(self, textvariable=self.clone_uid_var, width=20, font=("Arial", 11))
+        self.clone_uid_entry.grid(row=7, column=1, columnspan=2, sticky=tk.W, pady=5)
+
+        self.is_secure_var = tk.BooleanVar()
+        tk.Checkbutton(self, text="Is secure?",
+                       variable=self.is_secure_var,
+                       bg='lightblue',
+                       font=("Arial", 9, 'bold')).grid(row=8, column=1, columnspan=4, sticky=tk.W, pady=5)
 
         tk.Button(self,
                   text="Submit",
-                  font=("Helvetica", 10),
-                  command=self.save_button_clicked).grid(row=8, column=1, sticky=tk.NSEW, pady=15)
+                  font=("Arial", 10),
+                  command=self.save_button_clicked).grid(row=9, column=1, sticky=tk.NSEW, pady=15)
         tk.Button(self,
                   text=" Cancel ",
-                  font=("Helvetica", 10),
-                  command=self.on_close).grid(row=8, column=3, sticky=tk.NSEW, pady=15, padx=20)
+                  font=("Arial", 10),
+                  command=self.on_close).grid(row=9, column=3, sticky=tk.NSEW, pady=15, padx=20)
 
         self.generate_password()
 
         self.message_label = ttk.Label(self, text='', background='lightblue')
-        self.message_label.grid(row=9, column=1, columnspan=5, sticky=tk.NW)
+        self.message_label.grid(row=10, column=1, columnspan=5, sticky=tk.NW)
+
 
     def on_close(self):
         self.destroy()
@@ -132,6 +139,7 @@ class AddFacebookAccount(tk.Toplevel):
                 'cookie': self.cookie_var.get(),
                 'uid': self.uid_var.get(),
                 'token': self.token_var.get(),
+                'secure': self.is_secure_var.get(),
                 'clone_target_uid': self.clone_uid_var.get()
             })
 

@@ -1,35 +1,17 @@
 import subprocess
-import shutil
 import sys
 import os
-import json
-from src.constants.constants import LDPLAYER_PATH, LDCONSOLE_PATH, CLONE_LD_DATA
+from src.constants.constants import LDCONSOLE_PATH, vms_path, config_path
 from src.models.Device import Device
+from src.models.Email import EmailAccount
+from src.models.Facebook import FBAccount
+from src.models.ListDevices import ListDevices
+from src.utils.fileUtils import open_file, save_json_file
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-config_path = os.path.join(LDPLAYER_PATH, "vms", "config")
-vms_path = os.path.join(LDPLAYER_PATH, "vms")
 
-
-def open_file(filename, folder):
-    # Get the full path to the file
-    path = os.path.join(os.path.expanduser('~'), folder, filename)
-    # Open the file and read its contents
-    with open(path, 'r') as f:
-        contents = json.load(f)
-    # Return the contents of the file
-    return contents
-
-
-def save_json_file(data, filename, folder):
-    path = os.path.join(os.path.expanduser('~'), folder, filename)
-    with open(path, 'w') as file:
-        json.dump(data, file, indent=2)
-
-
-def create_ld():
-    new_ldplayer = None
+def create_ld(data=None):
     try:
         id_list = []
         file_list = os.listdir(vms_path)
@@ -47,131 +29,60 @@ def create_ld():
             while str(i) in id_list:
                 i = i + 1
 
-        subprocess.call([LDCONSOLE_PATH] + ["add"], shell=True)
+        email_address = f'new{i}'
+        if isinstance(data, FBAccount):
+            email_address = data.email.email_address
+        if isinstance(data, EmailAccount):
+            email_address = data.email_address
 
-        contents = open_file(f'leidian{str(i)}.config', config_path)
+        subprocess.call([LDCONSOLE_PATH] + ["copy", "--name", email_address, "--from", "fake"], shell=True)
+        if data is not None:
+            if data.device is None:
+                contents = open_file(f'leidian{str(i)}.config', config_path)
 
-        source_data = os.path.join(LDPLAYER_PATH, "vms", "data.vmdk")
-        destination_data = os.path.join(LDPLAYER_PATH, "vms", f'leidian{str(i)}')
-        if CLONE_LD_DATA:
-            shutil.copy(source_data, destination_data)
+                new_ldplayer = Device(ID=None,
+                                      name=email_address,
+                                      email_address=email_address,
+                                      imei=contents["propertySettings.phoneIMEI"],
+                                      manufacturer=contents["propertySettings.phoneManufacturer"],
+                                      model=contents["propertySettings.phoneModel"],
+                                      imsi=contents["propertySettings.phoneIMSI"],
+                                      androidId=contents["propertySettings.phoneAndroidId"],
+                                      simSerial=contents["propertySettings.phoneSimSerial"],
+                                      macAddress=contents["propertySettings.macAddress"],
+                                      is_ready=True)
 
-        name_ld = f"LDPlayer-{str(i)}"
-        if int(i) == 0:
-            name_ld = "LDPlayer"
-
-        new_ldplayer = Device(ID=i,
-                              name=name_ld,
-                              imei=contents["propertySettings.phoneIMEI"],
-                              uuid=f"emulator-{str(5554 + (int(i) * 2))}",
-                              manufacturer=contents["propertySettings.phoneManufacturer"],
-                              model=contents["propertySettings.phoneModel"],
-                              imsi=contents["propertySettings.phoneIMSI"],
-                              androidId=contents["propertySettings.phoneAndroidId"],
-                              simSerial=contents["propertySettings.phoneSimSerial"],
-                              macAddress=contents["propertySettings.macAddress"]
-                              )
-
-        config = {
-            "name": name_ld,
-            "uuid": f"emulator-{str(5554 + (int(i) * 2))}",
-            "facebook": False,
-            "email": False,
-            "basicSettings.rootMode": True,
-            "basicSettings.adbDebug": 2,
-            "advancedSettings.resolution": {
-                "width": 720,
-                "height": 1280
-            },
-            "advancedSettings.resolutionDpi": 320,
-            "basicSettings.HDRQuality": 0,
-            "advancedSettings.cpuCount": 1,
-            "advancedSettings.memorySize": 1024
-        }
-
-        # Merge 2 json data
-        contents = {**contents, **config}
-        save_json_file(contents, f'leidian{str(i)}.config', config_path)
-
-    except subprocess.CalledProcessError as e:
-        print(f"Error: {e}")
-        return None
-
-    return new_ldplayer
-
-
-def clone_ld(device):
-    try:
-        id_list = []
-        file_list = os.listdir(vms_path)
-
-        for file in file_list:
-            if file[:7] == "leidian":
-                id_list.append(file[7:])
             else:
-                continue
+                new_ldplayer = Device(ID=None,
+                                      name=email_address,
+                                      email_address=email_address,
+                                      imei=data.device.imei,
+                                      manufacturer=data.device.manufacturer,
+                                      model=data.device.model,
+                                      imsi=data.device.imsi,
+                                      androidId=data.device.androidId,
+                                      simSerial=data.device.simSerial,
+                                      macAddress=data.device.macAddress,
+                                      is_ready=True)
 
-        id_list = sorted(id_list, key=lambda x: int(x))
-        i = 0
 
-        while str(i) in id_list:
-            i = i + 1
+        else:
+            contents = open_file(f'leidian{str(i)}.config', config_path)
+            new_ldplayer = Device(ID=None,
+                                  name=email_address,
+                                  email_address=email_address,
+                                  imei=contents["propertySettings.phoneIMEI"],
+                                  manufacturer=contents["propertySettings.phoneManufacturer"],
+                                  model=contents["propertySettings.phoneModel"],
+                                  imsi=contents["propertySettings.phoneIMSI"],
+                                  androidId=contents["propertySettings.phoneAndroidId"],
+                                  simSerial=contents["propertySettings.phoneSimSerial"],
+                                  macAddress=contents["propertySettings.macAddress"],
+                                  is_ready=True)
 
-        subprocess.call([LDCONSOLE_PATH] + ["add"], shell=True)
-
-        source_data = os.path.join(LDPLAYER_PATH, "vms", "data.vmdk")
-        destination_data = os.path.join(LDPLAYER_PATH, "vms", f'leidian{str(i)}')
-        if CLONE_LD_DATA:
-            shutil.copy(source_data, destination_data)
-
-        name_ld = f"LDPlayer-{str(i)}"
-        if int(i) == 0:
-            name_ld = "LDPlayer"
-
-        contents = {
-            "propertySettings.phoneIMEI": device.imei,
-            "propertySettings.phoneIMSI": device.imsi,
-            "propertySettings.phoneSimSerial": device.simSerial,
-            "propertySettings.phoneAndroidId": device.androidId,
-            "propertySettings.phoneModel": device.model,
-            "propertySettings.phoneManufacturer": device.manufacturer,
-            "propertySettings.macAddress": device.macAddress
-        }
-
-        config = {
-            "name": name_ld,
-            "uuid": f"emulator-{str(5554 + (int(i) * 2))}",
-            "facebook": "",
-            "email": "",
-            "basicSettings.rootMode": True,
-            "basicSettings.adbDebug": 2,
-            "advancedSettings.resolution": {
-                "width": 720,
-                "height": 1280
-            },
-            "advancedSettings.resolutionDpi": 320,
-            "basicSettings.HDRQuality": 0,
-            "advancedSettings.cpuCount": 1,
-            "advancedSettings.memorySize": 1024
-        }
-
-        new_LDPlayer = Device(ID=str(i),
-                              name=name_ld,
-                              imei=device.imei,
-                              uuid=f"emulator-{str(5554 + (int(i) * 2))}",
-                              manufacturer=device.manufacturer,
-                              model=device.model,
-                              imsi=device.imsi,
-                              androidId=device.androidId,
-                              simSerial=device.simSerial,
-                              macAddress=device.macAddress)
-
-        # Merge 2 json data
-        contents = {**contents, **config}
-        save_json_file(contents, f'leidian{str(i)}.config', config_path)
+        ListDevices.ld_list[i] = new_ldplayer
+        return ListDevices.ld_list[i]
 
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
         return None
-
-    return new_LDPlayer

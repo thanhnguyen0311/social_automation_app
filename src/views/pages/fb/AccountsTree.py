@@ -2,25 +2,27 @@ import tkinter as tk
 from tkinter import ttk
 import threading
 from tkinter import font
-import time
 
 from src.services.fbService import get_all_fb_accounts, remove_fb_accounts
 
 
 class FBAccountsList(ttk.Treeview):
-    def __init__(self, master):
-        ttk.Treeview.__init__(self, master,
-                              columns=("ID", "Name", "email", "password",
-                                       "device", "last_login",
-                                       "create_date", "live", "status"),
+    def __init__(self, master, show_checkpoint, show_insecure):
+        ttk.Treeview.__init__(self, master, columns=("ID", "Name", "email",
+                                                     "device", "last_login",
+                                                     "create_date", "live", "status"),
                               show="headings", selectmode="extended")
         self.hint_window = None
+        self.master = master
+        self.show_checkpoint = show_checkpoint
+        self.show_insecure = show_insecure
+        self.bbox_list = {}
+        self.is_loaded = True
         self.refresh_thread = threading.Thread(target=self.refresh)
         self.refresh_thread.start()
         self.heading("ID", text="ID")
         self.heading("Name", text="Name")
         self.heading("email", text="Email")
-        self.heading("password", text="Password")
         self.heading("device", text="Device")
         self.heading("last_login", text="Last login")
         self.heading("create_date", text="Create date")
@@ -30,7 +32,6 @@ class FBAccountsList(ttk.Treeview):
         self.column("ID", width=5, anchor='center')
         self.column("Name", width=50, anchor='center')
         self.column("email", width=120, anchor='center')
-        self.column("password", width=80, anchor='center')
         self.column("device", width=70, anchor='center')
         self.column("last_login", width=50, anchor='center')
         self.column("create_date", width=50, anchor='center')
@@ -39,7 +40,6 @@ class FBAccountsList(ttk.Treeview):
 
         self.bind("<Motion>", self.on_cursor_move)
         self.data = {}
-        self.bbox_list = {}
 
     def get_selected(self):
         list_account = []
@@ -54,7 +54,7 @@ class FBAccountsList(ttk.Treeview):
 
         col = self.identify_column(event.x)
         item_iid = self.identify_row(event.y)
-        if col == '#5':
+        if col == '#4':
             if item_iid and self.data[int(item_iid)].device:
                 self.show_device_hint(event, self.data[int(item_iid)])
 
@@ -65,30 +65,35 @@ class FBAccountsList(ttk.Treeview):
         self.on_refresh_clicked()
 
     def on_refresh_clicked(self):
-        self.refresh_thread = threading.Thread(target=self.refresh, daemon=True)
-        self.refresh_thread.start()
+        if self.is_loaded:
+            self.is_loaded = False
+            self.refresh_thread = threading.Thread(target=self.refresh, daemon=True)
+            self.refresh_thread.start()
 
     def refresh(self):
-        self.delete(*self.get_children())
-        self.data = get_all_fb_accounts(1)
-        for id, (account_id, account) in enumerate(self.data.items(), start=1):
+        for account_id, bbox in self.bbox_list.items():
             if self.bbox_list.get(account_id):
                 self.bbox_list.get(account_id).destroy()
-            else:
-                pass
 
+        self.delete(*self.get_children())
+        self.data = get_all_fb_accounts(1)
+        self.list_filter()
+        for ID, (account_id, account) in enumerate(self.data.items(), start=1):
             if account.is_deleted:
                 continue
+
+            email_address = account.email.email_address
+            if account.secure:
+                email_address = account.email.email_address + " ✔️"
 
             device_imei = ""
             if account.device:
                 device_imei = account.device.imei
 
             self.insert("", "end", iid=account.facebook_account_id,
-                        values=(id,
+                        values=(ID,
                                 account.first_name + " " + account.last_name,
-                                account.email.email_address,
-                                "*************",
+                                email_address,
                                 device_imei,
                                 account.last_login,
                                 account.create_date,
@@ -123,6 +128,8 @@ class FBAccountsList(ttk.Treeview):
 
             self.bbox_list[account_id] = account.status
 
+        self.is_loaded = True
+
     def show_device_hint(self, event, account):
         self.hint_window = tk.Toplevel(self, highlightthickness=2, highlightbackground="gray")
         self.hint_window.wm_overrideredirect(True)
@@ -156,3 +163,17 @@ class FBAccountsList(ttk.Treeview):
                  text="Mac Address").grid(row=6, column=0, sticky=tk.W)
         tk.Label(self.hint_window,
                  text=account.device.macAddress).grid(row=6, column=1, sticky=tk.NW)
+
+    def list_filter(self):
+        to_remove = []
+        for account_id, account in self.data.items():
+            if self.show_insecure.get():
+                if account.secure:
+                    to_remove.append(account_id)
+                    continue
+            if not self.show_checkpoint.get():
+                if account.status == "CHECKPOINT":
+                    to_remove.append(account_id)
+        for account_id in to_remove:
+            del self.data[account_id]
+        pass

@@ -2,7 +2,6 @@ import subprocess
 import sys
 import os
 from src.constants.constants import LDCONSOLE_PATH
-from src.ld_manager.get_list_ld import get_list_ld
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -17,15 +16,10 @@ def remove_ld(device):
         return False
 
 
-def remove_all_ld():
-    ld_list = get_list_ld()
-
-    for device in ld_list:
+def remove_all_ld(ld_list):
+    for key, device in ld_list.items():
         try:
             subprocess.run([LDCONSOLE_PATH] + ["remove", "--name", device.name], shell=True)
 
         except subprocess.CalledProcessError as e:
             print(f"Error: {e}")
-            return False
-
-    return True
