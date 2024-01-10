@@ -176,16 +176,14 @@ def run_account_devices(list_account):
         for account in list_account:
             if account.device is None:
                 create_device(account)
-                continue
+                run_ld(account.device)
             else:
                 if not account.device.is_ready:
                     create_device(account)
-                    continue
                 else:
-                    run_ld(account.device)
                     print(f"Start LD for {account.device.name}")
                     time.sleep(2)
-                    continue
+                run_ld(account.device)
         break
     time.sleep(5)
     sort_ld()

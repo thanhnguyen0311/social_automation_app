@@ -44,3 +44,13 @@ def input_text_device(text, device):
 
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")
+
+
+def open_link(link, device):
+    try:
+        subprocess.run([LDCONSOLE_PATH] + ["adb", "--name", device.name, "--command",
+                                           f"shell am start -a android.intent.action.VIEW -d {link}"]
+                       , shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")

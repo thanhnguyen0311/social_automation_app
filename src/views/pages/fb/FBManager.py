@@ -9,6 +9,7 @@ from src.views.pages.fb.AddPopup import AddFacebookAccount
 
 
 class FBManager(tk.Toplevel):
+
     def __init__(self, master):
         tk.Toplevel.__init__(self, bg='lightblue')
         self.title("Facebook Service")
@@ -22,7 +23,6 @@ class FBManager(tk.Toplevel):
         self.style = ttk.Style(self)
         self.style.theme_use('clam')
         self.style.configure('Treeview', rowheight=25)
-
         button_frame = tk.Frame(self, bg='lightblue')
         button_frame.pack(padx=5, pady=20, anchor=tk.NW)
 
@@ -68,6 +68,14 @@ class FBManager(tk.Toplevel):
         button_action.grid(row=1, column=3,
                            padx=5, pady=10, sticky=tk.W)
 
+        tk.Label(button_frame,
+                 text="Link: ",
+                 font=("Arial", 10),
+                 bg='lightblue').grid(row=2, column=0, sticky=tk.E, pady=5)
+        self.input_link_var = tk.StringVar()
+        self.input_link_entry = ttk.Entry(button_frame, textvariable=self.input_link_var, width=9, font=("Arial", 11))
+        self.input_link_entry.grid(row=2, column=1, columnspan=5, sticky=tk.NSEW, pady=5)
+
         self.fb_account_list.pack(padx=10, pady=5,
                                   fill=tk.BOTH, expand=True)
 
@@ -86,6 +94,9 @@ class FBManager(tk.Toplevel):
         selected_option = self.option.get()
         list_account = self.fb_account_list.get_selected()
 
+        if len(list_account) == 0:
+            return
+
         task = FacebookTask(function="",
                             args=None,
                             list_account=list_account,
@@ -94,12 +105,18 @@ class FBManager(tk.Toplevel):
             FBTaskEnum.LOGIN: task.login,
             FBTaskEnum.REGISTER: task.register,
             FBTaskEnum.NEW_FEED: task.farm_new_feed,
+            FBTaskEnum.LIKE_POST: task.like_post
         }
         selected_enum = FBTaskEnum(selected_option)
 
         if selected_enum in task_mapping:
             task.name = selected_enum.value
             task.function = task_mapping[selected_enum]
+
+            if selected_enum == FBTaskEnum.LIKE_POST:
+                if self.input_link_var.get() == "":
+                    return
+                task.args = (self.input_link_var.get(),)
 
         ListDevices.add_task(task)
 

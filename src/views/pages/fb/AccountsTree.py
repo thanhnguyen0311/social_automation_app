@@ -3,6 +3,7 @@ from tkinter import ttk
 import threading
 from tkinter import font
 
+from src.models.Facebook import FBAccount
 from src.services.fbService import get_all_fb_accounts, remove_fb_accounts
 
 
@@ -13,10 +14,8 @@ class FBAccountsList(ttk.Treeview):
                                                      "create_date", "live", "status"),
                               show="headings", selectmode="extended")
         self.hint_window = None
-        self.master = master
         self.show_checkpoint = show_checkpoint
         self.show_insecure = show_insecure
-        self.bbox_list = {}
         self.is_loaded = True
         self.refresh_thread = threading.Thread(target=self.refresh)
         self.refresh_thread.start()
@@ -39,12 +38,11 @@ class FBAccountsList(ttk.Treeview):
         self.column("status", width=20, anchor='center')
 
         self.bind("<Motion>", self.on_cursor_move)
-        self.data = {}
 
     def get_selected(self):
         list_account = []
         for item in self.selection():
-            list_account.append(self.data[int(item)])
+            list_account.append(FBAccount.list_accounts[int(item)])
 
         return list_account
 
@@ -55,8 +53,8 @@ class FBAccountsList(ttk.Treeview):
         col = self.identify_column(event.x)
         item_iid = self.identify_row(event.y)
         if col == '#4':
-            if item_iid and self.data[int(item_iid)].device:
-                self.show_device_hint(event, self.data[int(item_iid)])
+            if item_iid and FBAccount.list_accounts[int(item_iid)].device:
+                self.show_device_hint(event, FBAccount.list_accounts[int(item_iid)])
 
     def remove_accounts(self):
         for item in self.selection():
@@ -65,70 +63,15 @@ class FBAccountsList(ttk.Treeview):
         self.on_refresh_clicked()
 
     def on_refresh_clicked(self):
-        if self.is_loaded:
-            self.is_loaded = False
+        self.is_loaded = False
+        if not self.refresh_thread.is_alive():
             self.refresh_thread = threading.Thread(target=self.refresh, daemon=True)
             self.refresh_thread.start()
 
     def refresh(self):
-        for account_id, bbox in self.bbox_list.items():
-            if self.bbox_list.get(account_id):
-                self.bbox_list.get(account_id).destroy()
-
-        self.delete(*self.get_children())
-        self.data = get_all_fb_accounts(1)
-        self.list_filter()
-        for ID, (account_id, account) in enumerate(self.data.items(), start=1):
-            if account.is_deleted:
-                continue
-
-            email_address = account.email.email_address
-            if account.secure:
-                email_address = account.email.email_address + " ✔️"
-
-            device_imei = ""
-            if account.device:
-                device_imei = account.device.imei
-
-            self.insert("", "end", iid=account.facebook_account_id,
-                        values=(ID,
-                                account.first_name + " " + account.last_name,
-                                email_address,
-                                device_imei,
-                                account.last_login,
-                                account.create_date,
-                                "",
-                                account.status
-                                ))
-        self.show_status()
-
-    def show_status(self):
-        for account_id, account in self.data.items():
-            bbox = self.bbox(account_id, "status")
-            x, y, width, height = bbox
-            if account.status == "REGISTERED":
-                bold_font = font.Font(family="Arial", size=8, weight="bold")
-                account.status = tk.Label(self, text="REGISTERED", bg='white', fg='blue', font=bold_font)
-                account.status.place(x=x, y=y, width=width, height=height)
-
-            if account.status == "ALIVE":
-                bold_font = font.Font(family="Arial", size=8, weight="bold")
-                account.status = tk.Label(self, text="LIVE", bg='white', fg='green', font=bold_font)
-                account.status.place(x=x, y=y, width=width, height=height)
-
-            if account.status == "CHECKPOINT":
-                bold_font = font.Font(family="Arial", size=8, weight="bold")
-                account.status = tk.Label(self, text="CHECKPOINT", bg='white', fg='red', font=bold_font)
-                account.status.place(x=x, y=y, width=width, height=height)
-
-            if account.status == "DIE":
-                bold_font = font.Font(family="Arial", size=8, weight="bold")
-                account.status = tk.Label(self, text="DIE", bg='white', fg='black', font=bold_font)
-                account.status.place(x=x, y=y, width=width, height=height)
-
-            self.bbox_list[account_id] = account.status
-
-        self.is_loaded = True
+        FBAccount.list_accounts = get_all_fb_accounts(1)
+        if self.winfo_exists():
+            self.list_filter()
 
     def show_device_hint(self, event, account):
         self.hint_window = tk.Toplevel(self, highlightthickness=2, highlightbackground="gray")
@@ -165,15 +108,37 @@ class FBAccountsList(ttk.Treeview):
                  text=account.device.macAddress).grid(row=6, column=1, sticky=tk.NW)
 
     def list_filter(self):
-        to_remove = []
-        for account_id, account in self.data.items():
+
+        self.delete(*self.get_children())
+
+        for ID, (account_id, account) in enumerate(FBAccount.list_accounts.items(), start=1):
+
             if self.show_insecure.get():
                 if account.secure:
-                    to_remove.append(account_id)
                     continue
             if not self.show_checkpoint.get():
                 if account.status == "CHECKPOINT":
-                    to_remove.append(account_id)
-        for account_id in to_remove:
-            del self.data[account_id]
-        pass
+                    continue
+            if account.is_deleted:
+                continue
+
+            email_address = account.email.email_address
+            if account.secure:
+                email_address = account.email.email_address + " ✔️"
+
+            device_imei = ""
+            if account.device:
+                device_imei = account.device.imei
+
+            self.insert("", "end", iid=account.facebook_account_id,
+                        values=(ID,
+                                account.first_name + " " + account.last_name,
+                                email_address,
+                                device_imei,
+                                account.last_login,
+                                account.create_date,
+                                "",
+                                account.status
+                                ))
+
+        self.is_loaded = True

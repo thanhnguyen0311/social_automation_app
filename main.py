@@ -1,4 +1,5 @@
 import tkinter as tk
+
 from src.views.layouts.SideBar import SideBar
 
 
@@ -25,6 +26,8 @@ class HomePage(tk.Tk):
         # asyncio.get_event_loop().run_until_complete(self.websocket_client.close())
         # self.websocket_client.websocket_thread.join()
         self.destroy()
+
+
 
 
 if __name__ == '__main__':

@@ -4,6 +4,8 @@ from src.connection.mysqlConnection import connect_to_database
 
 
 class FBAccount:
+    list_accounts = {}
+
     def __init__(self,
                  first_name,
                  last_name,
@@ -115,3 +117,6 @@ class FBAccount:
             connection.close()
         except Exception as e:
             raise ConnectionError("Could not connect to database") from e
+
+
+

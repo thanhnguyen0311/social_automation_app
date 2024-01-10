@@ -1,16 +1,22 @@
 import threading
 import time
 
-from src.remote.email.register import register_email
+from src.models.tasks.Task import Task
+from src.remote.email.register import RegisterEmail
 from src.services.deviceService import run_account_devices
 
 
-class EmailTask:
-    @staticmethod
-    def create_emails(list_account):
-        run_account_devices(list_account)
-        for account in list_account:
-            account.device.thread = threading.Thread(target=register_email, args=(account,))
+class EmailTask(Task):
+    def __init__(self, function, args, list_account, name):
+        super().__init__(function, args, list_account, name)
+
+    def _run_task(self, task_creator):
+        run_account_devices(self.list_account)
+        for account in self.list_account:
+            account.task = task_creator(account)
+            account.device.thread = threading.Thread(target=account.task.__run__)
             account.device.thread.start()
-            account.device.is_running = True
             time.sleep(1)
+
+    def create_emails(self):
+        self._run_task(RegisterEmail)

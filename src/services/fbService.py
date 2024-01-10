@@ -17,7 +17,7 @@ def get_all_fb_accounts(user_id):
         result = cursor.fetchall()
         cursor.close()
         connection.close()
-        fb_accounts = {}
+        FBAccount.list_accounts = {}
         for row in result:
             email = None
             if row['email_id']:
@@ -30,7 +30,7 @@ def get_all_fb_accounts(user_id):
                                          password=row['password'])
 
             device = find_device_by_id(row['device_id'], email.email_address)
-            fb_accounts[row['fb_id']] = FBAccount(facebook_account_id=row['fb_id'],
+            FBAccount.list_accounts[row['fb_id']] = FBAccount(facebook_account_id=row['fb_id'],
                                                   first_name=row['first_name'],
                                                   last_name=row['last_name'],
                                                   device=device,
@@ -49,7 +49,7 @@ def get_all_fb_accounts(user_id):
                                                   gender=row['gender']
                                                   )
 
-        return fb_accounts
+        return FBAccount.list_accounts
 
     except Exception as e:
         raise ConnectionError("Could not connect to database") from e
