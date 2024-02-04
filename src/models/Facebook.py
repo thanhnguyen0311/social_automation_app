@@ -51,28 +51,6 @@ class FBAccount:
                 f'{self.status} {self.is_deleted} {self.last_login} {self.create_date}')
 
     @property
-    def first_name(self):
-        return self.__first_name
-
-    @first_name.setter
-    def first_name(self, value):
-        if 2 <= len(value) <= 10 and not any(char.isdigit() for char in value):
-            self.__first_name = value
-        else:
-            raise ValueError(f'Invalid first name: {value}')
-
-    @property
-    def last_name(self):
-        return self.__last_name
-
-    @last_name.setter
-    def last_name(self, value):
-        if 2 <= len(value) <= 10 and not any(char.isdigit() for char in value):
-            self.__last_name = value
-        else:
-            raise ValueError(f'Invalid last name: {value}')
-
-    @property
     def password(self):
         return self.__password
 
@@ -87,7 +65,7 @@ class FBAccount:
         try:
             connection = connect_to_database()
             cursor = connection.cursor()
-            if email_address:
+            if email_address is not None:
                 select_query = "SELECT * FROM emails WHERE email_address = %s"
                 cursor.execute(select_query, (email_address,))
                 result = cursor.fetchone()

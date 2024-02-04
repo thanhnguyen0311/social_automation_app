@@ -3,6 +3,7 @@ import tkinter as tk
 from src.views.layouts.MainFrame import MainFrame
 from src.views.pages.email.EmailManager import EmailManager
 from src.views.pages.fb.FBManager import FBManager
+from src.views.pages.home.HomePage import Home_Page
 from src.views.pages.ld.LDManager import LDManager_Page
 from src.views.pages.Setting import Setting
 from src.constants.constants import LOGO_PATH
@@ -17,13 +18,17 @@ class SideBar(tk.Frame):
         self.configure(width=150)
         self.fb_service = None
         self.websocket = websocket
-        self.main_frame = MainFrame(LDManager_Page)
+        self.main_frame = MainFrame(Home_Page)
         self.main_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.border = tk.Label(self, borderwidth=1, relief='solid', padx=0)
         self.border.pack(side=tk.RIGHT, fill=tk.Y)
 
         img = show_image(self, LOGO_PATH, 80, 80)
         img.pack(padx=35, pady=50)
+
+        self.button_LDManager = tk.Button(self, text="Home", width=150, height=2,
+                                          command=lambda: self.choose_page(Home_Page))
+        self.button_LDManager.pack(padx=5, pady=5)
 
         self.button_LDManager = tk.Button(self, text="LDManager", width=150, height=2,
                                           command=lambda: self.choose_page(LDManager_Page))

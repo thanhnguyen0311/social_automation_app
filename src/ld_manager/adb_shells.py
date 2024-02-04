@@ -13,9 +13,9 @@ def restart_adb_server(count=None):
         subprocess.run(["adb", "kill-server"], check=True)
         time.sleep(2)
         subprocess.run(["adb", "start-server"], check=True)
-        time.sleep(30)
-        if int(count) > 10:
-            time.sleep(30)
+        time.sleep(2)
+        # if int(count) > 10:
+        #     time.sleep(30)
 
 
     except subprocess.CalledProcessError as e:

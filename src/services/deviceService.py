@@ -161,8 +161,8 @@ def create_device(data=None):
                         value.ID = device_id
                         value.uuid = f"emulator-{5554 + (int(device_id) * 2)}"
                         ListDevices.ld_list[device_id] = ListDevices.ld_list.pop(key)
+                        data.device = ListDevices.ld_list[device_id]
                         return ListDevices.ld_list[device_id]
-
         return get_device
 
     except Exception as e:
@@ -172,6 +172,7 @@ def create_device(data=None):
 def run_account_devices(list_account):
     print("Kill all devices...")
     quit_all()
+    restart_adb_server(count=len(list_account))
     while True:
         for account in list_account:
             if account.device is None:
@@ -185,7 +186,6 @@ def run_account_devices(list_account):
                     time.sleep(2)
                 run_ld(account.device)
         break
-    time.sleep(5)
+    time.sleep(20)
     sort_ld()
     print("Restart adb server....")
-    restart_adb_server(count=len(list_account))

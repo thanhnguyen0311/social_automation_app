@@ -56,7 +56,7 @@ class FBManager(tk.Toplevel):
                                    textvariable=self.option,
                                    width=20,
                                    height=20,
-                                   font="Verdana 8 bold",
+                                   font="Verdana  8 bold",
                                    values=[option.value for option in FBTaskEnum])
         option_menu.grid(row=1, column=0, columnspan=3,
                          padx=5, pady=10, sticky=tk.NSEW)
@@ -107,6 +107,7 @@ class FBManager(tk.Toplevel):
             FBTaskEnum.NEW_FEED: task.farm_new_feed,
             FBTaskEnum.LIKE_POST: task.like_post
         }
+
         selected_enum = FBTaskEnum(selected_option)
 
         if selected_enum in task_mapping:

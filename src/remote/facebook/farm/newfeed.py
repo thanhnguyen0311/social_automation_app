@@ -51,3 +51,5 @@ class FarmNewFeed(LoginFacebook):
                                              '/android.widget.Button[1]').click()
                     self.__run__()
                     continue
+
+        self.__stop__()

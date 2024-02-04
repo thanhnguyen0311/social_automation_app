@@ -5,6 +5,8 @@ from selenium.webdriver.common.by import By
 from urllib3.exceptions import MaxRetryError
 
 from src.enum.checkpoints import LoginEnum
+from src.ld_manager.quit_ld import quit_ld
+from src.ld_manager.remove_ld import remove_ld
 from src.remote.driver import Driver
 from src.services.fbService import update_last_login, update_account_status, get_2fa_code
 from src.utils.findText import find_text_in_screenshot
@@ -16,16 +18,20 @@ class LoginFacebook(Driver):
         super().__init__(data)
 
     def __run__(self):
+        if self.data.status == "REGISTERED":
+            time.sleep(30)
         while True:
             try:
                 self.driver = super().__run__()
                 super().__find_element__(xpath='//android.widget.TextView[@content-desc="Facebook"]').click()
-
+                if self.data.status == "REGISTERED":
+                    time.sleep(15)
                 time.sleep(10)
 
                 checkpoint = capture_checkpoint(self.driver, (400, 55, 600, 130))
                 if (find_text_in_screenshot(self.driver, "on your mind?")
-                        or LoginEnum.LOGIN_SUCCESS.value == checkpoint or LoginEnum.LOGIN_SUCCESS2.value == checkpoint):
+                        or LoginEnum.LOGIN_SUCCESS.value == checkpoint or LoginEnum.LOGIN_SUCCESS2.value == checkpoint
+                        or LoginEnum.LOGIN_SUCCESS3.value == checkpoint):
                     update_last_login(self.data.facebook_account_id)
                     print(f"Login successful to account {self.data.email.email_address}.")
                     return self.driver
@@ -33,6 +39,8 @@ class LoginFacebook(Driver):
                 self.pass_login_checkpoint()
                 if self.data.status == "CHECKPOINT":
                     self.driver.quit()
+                    quit_ld(self.data.device)
+                    remove_ld(self.data.device)
                     return
 
                 if find_text_in_screenshot(self.driver, "Forgot password"):
@@ -49,18 +57,26 @@ class LoginFacebook(Driver):
 
                     while find_text_in_screenshot(self.driver, "Forgot password"):
                         super().__find_element__(xpath='//android.view.View[@content-desc="Log in"]').click()
-                        time.sleep(15)
+                        time.sleep(5)
+
+                    self.driver.find_element(By.XPATH,
+                                             '//android.widget.Button[@content-desc="Save"]/android.view.ViewGroup').click()
 
                     self.pass_login_checkpoint()
+
                     if self.data.status == "CHECKPOINT":
                         self.driver.quit()
+                        quit_ld(self.data.device)
+                        time.sleep(2)
+                        remove_ld(self.data.device)
                         return
 
                 time.sleep(2)
 
                 checkpoint = capture_checkpoint(self.driver, (400, 55, 600, 130))
                 if (find_text_in_screenshot(self.driver, "on your mind?")
-                        or LoginEnum.LOGIN_SUCCESS.value == checkpoint):
+                        or LoginEnum.LOGIN_SUCCESS.value == checkpoint or LoginEnum.LOGIN_SUCCESS2.value == checkpoint
+                        or LoginEnum.LOGIN_SUCCESS3.value == checkpoint):
                     update_last_login(self.data.facebook_account_id)
                     print(f"Login successful to account {self.data.email.email_address}.")
                     return self.driver
@@ -119,7 +135,7 @@ class LoginFacebook(Driver):
 
             if (find_text_in_screenshot(self.driver, "Turn on contact uploading")
                     or find_text_in_screenshot(self.driver, "See who's on")):
-                super().__find_element__(xpath= '//android.view.ViewGroup[@content-desc="Not now"]').click()
+                super().__find_element__(xpath='//android.view.ViewGroup[@content-desc="Not now"]').click()
                 continue
 
             if find_text_in_screenshot(self.driver, "Something went wrong"):
@@ -135,7 +151,7 @@ class LoginFacebook(Driver):
                 continue
 
             if find_text_in_screenshot(self.driver, "We couldn't find any"):
-                super().__find_element__(xpath= '//android.view.ViewGroup[@content-desc="Next"]').click()
+                super().__find_element__(xpath='//android.view.ViewGroup[@content-desc="Next"]').click()
                 continue
 
             if find_text_in_screenshot(self.driver, "is not visible") or find_text_in_screenshot(self.driver, "appeal"):
@@ -143,35 +159,39 @@ class LoginFacebook(Driver):
                 self.data.status = "CHECKPOINT"
                 update_account_status(self.data.facebook_account_id, "CHECKPOINT")
                 self.driver.quit()
+                quit_ld(self.data.device)
+                time.sleep(2)
+                remove_ld(self.data.device)
                 return
 
             if find_text_in_screenshot(self.driver, "Continue in English"):
                 super().__find_element__(xpath=
-                                                   '//android.view.ViewGroup[@content-desc="Continue in English (US)"]').click()
+                                         '//android.view.ViewGroup[@content-desc="Continue in English (US)"]').click()
                 continue
 
             if find_text_in_screenshot(self.driver, "Add email"):
                 super().__find_element__(xpath=
-                                                   '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView[3]').click()
+                                         '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView[3]').click()
                 continue
 
             if find_text_in_screenshot(self.driver, "Add number"):
-                super().__find_element__(xpath='/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView[3]').click()
+                super().__find_element__(
+                    xpath='/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView[3]').click()
                 continue
 
             if find_text_in_screenshot(self.driver, "Access to contacts"):
                 super().__find_element__(xpath=
-                                                   '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[2]/android.view.ViewGroup').click()
+                                         '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.FrameLayout[1]/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.view.ViewGroup[1]/android.view.ViewGroup[2]/android.view.ViewGroup').click()
                 continue
 
             if find_text_in_screenshot(self.driver, "Facebook uses this"):
-                super().__find_element__(xpath= '//android.view.ViewGroup[@content-desc="Allow"]').click()
+                super().__find_element__(xpath='//android.view.ViewGroup[@content-desc="Allow"]').click()
                 super().__find_element__(xpath=
-                                                   '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]').click()
+                                         '/hierarchy/android.widget.FrameLayout/android.widget.FrameLayout/android.widget.FrameLayout/android.view.ViewGroup/android.widget.ScrollView/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.LinearLayout/android.widget.Button[2]').click()
                 continue
 
             if find_text_in_screenshot(self.driver, "save the login"):
-                super().__find_element__(xpath= '//android.view.View[@content-desc="Save"]').click()
+                super().__find_element__(xpath='//android.view.View[@content-desc="Save"]').click()
                 continue
 
             break

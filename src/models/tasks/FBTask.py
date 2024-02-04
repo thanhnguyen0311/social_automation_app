@@ -16,7 +16,10 @@ class FacebookTask(Task):
     def _run_task(self, task_creator, args=None):
         run_account_devices(self.list_account)
         for account in self.list_account:
-            account.task = task_creator(account, args)
+            if args is not None:
+                account.task = task_creator(account, args)
+            else:
+                account.task = task_creator(account)
             account.device.thread = threading.Thread(target=account.task.__run__)
             account.device.thread.start()
             time.sleep(1)

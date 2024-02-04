@@ -5,6 +5,7 @@ from tkinter import font
 
 from src.models.Facebook import FBAccount
 from src.services.fbService import get_all_fb_accounts, remove_fb_accounts
+from src.views.pages.fb.EditPopup import EditFacebookAccount
 
 
 class FBAccountsList(ttk.Treeview):
@@ -19,6 +20,7 @@ class FBAccountsList(ttk.Treeview):
         self.is_loaded = True
         self.refresh_thread = threading.Thread(target=self.refresh)
         self.refresh_thread.start()
+        self.edit_popup = None
         self.heading("ID", text="ID")
         self.heading("Name", text="Name")
         self.heading("email", text="Email")
@@ -39,6 +41,8 @@ class FBAccountsList(ttk.Treeview):
 
         self.bind("<Motion>", self.on_cursor_move)
 
+        self.bind("<Double-1>", self.on_double_click)
+
     def get_selected(self):
         list_account = []
         for item in self.selection():
@@ -46,15 +50,23 @@ class FBAccountsList(ttk.Treeview):
 
         return list_account
 
-    def on_cursor_move(self, event):
-        if self.hint_window:
-            self.hint_window.destroy()
+    def on_double_click(self, event):
+        item_iid = self.selection()[0]
+        account = FBAccount.list_accounts[int(item_iid)]
+        print(account)
+        if self.edit_popup is None or self.edit_popup.is_open is False:
+            self.edit_popup = EditFacebookAccount(self, account_iid=item_iid)
 
-        col = self.identify_column(event.x)
-        item_iid = self.identify_row(event.y)
-        if col == '#4':
-            if item_iid and FBAccount.list_accounts[int(item_iid)].device:
-                self.show_device_hint(event, FBAccount.list_accounts[int(item_iid)])
+    def on_cursor_move(self, event):
+        if self.is_loaded:
+            if self.hint_window:
+                self.hint_window.destroy()
+
+            col = self.identify_column(event.x)
+            item_iid = self.identify_row(event.y)
+            if col == '#4':
+                if item_iid and FBAccount.list_accounts[int(item_iid)].device:
+                    self.show_device_hint(event, FBAccount.list_accounts[int(item_iid)])
 
     def remove_accounts(self):
         for item in self.selection():
