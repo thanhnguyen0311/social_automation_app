@@ -1,10 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 
-from src.enum.EmailEnum import EmailActionEnum
+from src.enum.EmailEnum import EmailTaskEnum
 from src.models.ListDevices import ListDevices
-from src.models.tasks.Task import Task
-from src.services.deviceService import run_account_devices
+from src.models.tasks.EmailTask import EmailTask
 from src.views.pages.email.AddPopup import AddEmail
 from src.views.pages.email.EmailTree import MailList
 
@@ -37,10 +36,10 @@ class EmailManager(tk.Frame):
         button_remove.grid(row=0, column=2, padx=5)
 
         self.option = tk.StringVar()
-        self.option.set(EmailActionEnum.NO_ACTION.value)
+        self.option.set(EmailTaskEnum.NO_ACTION.value)
         option_menu = ttk.Combobox(button_frame,
                                    textvariable=self.option,
-                                   values=[option.value for option in EmailActionEnum])
+                                   values=[option.value for option in EmailTaskEnum])
         option_menu.grid(row=1, column=0, columnspan=2,
                          padx=5, pady=10, sticky=tk.NSEW)
 
@@ -61,7 +60,18 @@ class EmailManager(tk.Frame):
     def on_option_selected(self):
         selected_option = self.option.get()
         list_account = self.mail_list.get_selected()
-        if selected_option == EmailActionEnum.CREATE.value:
-            ListDevices.add_task(Task(function=run_account_devices,
-                                      args=(list_account,),
-                                      name="Starting create emails"))
+        task = EmailTask(function="",
+                         args=None,
+                         list_account=list_account,
+                         name="")
+        task_mapping = {
+            EmailTaskEnum.CREATE: task.create_emails,
+        }
+        selected_enum = EmailTaskEnum(selected_option)
+
+        if selected_enum in task_mapping:
+            task.name = selected_enum.value
+            task.function = task_mapping[selected_enum]
+
+        ListDevices.add_task(task)
+

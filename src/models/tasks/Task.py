@@ -1,5 +1,5 @@
 class Task:
-    def __init__(self, function, args=None, list_account=None, name=""):
+    def __init__(self, function, args=None, list_account=None, name=None):
         self.function = function
         self.name = name
         self.is_running = False

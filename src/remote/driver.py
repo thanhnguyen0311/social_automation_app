@@ -1,6 +1,7 @@
 import time
 
 from appium import webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.by import By
 
 from src.ld_manager.quit_ld import quit_ld
@@ -20,9 +21,13 @@ class Driver:
         }
 
     def __run__(self):
-        self.driver = webdriver.Remote("http://localhost:4723/wd/hub", self.desired_cap)
-        self.driver.implicitly_wait(30)
-        return self.driver
+        while True:
+            try:
+                self.driver = webdriver.Remote("http://localhost:4723/wd/hub", self.desired_cap)
+                self.driver.implicitly_wait(30)
+                return self.driver
+            except WebDriverException as e:
+                continue
 
     def __find_element__(self, xpath=None):
         time.sleep(1)
@@ -40,7 +45,6 @@ class Driver:
 
     def __stop__(self):
         self.is_running = False
-        self.driver.quit()
         quit_ld(self.data.device)
         self.data.device.is_running = False
 

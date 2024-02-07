@@ -2,6 +2,8 @@ import queue
 import threading
 import time
 
+from src.enum.FBTaskEnum import FBTaskEnum
+
 
 class ListDevices:
     ld_list = {}
@@ -28,7 +30,11 @@ class ListDevices:
                     print(f"Executing task: {task.name}")
                 task.execute()
                 ListDevices.running_task = task
+                start_time = time.time()
                 while task.is_running:
+                    if task.name == FBTaskEnum.LIKE_POST.value:
+                        if time.time() - start_time >= 90:
+                            ListDevices.cancel_current_task()
                     if not task.is_running:
                         ListDevices.running_task = None
                         break
@@ -45,3 +51,5 @@ class ListDevices:
             if ListDevices.running_task.is_running:
                 print(f"cancel task : {ListDevices.running_task.name}")
                 ListDevices.running_task.__stop__()
+                ListDevices.running_task.is_running = False
+                ListDevices.running_task = None

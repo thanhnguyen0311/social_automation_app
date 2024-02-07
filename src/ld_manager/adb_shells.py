@@ -13,9 +13,9 @@ def restart_adb_server(count=None):
         subprocess.run(["adb", "kill-server"], check=True)
         time.sleep(2)
         subprocess.run(["adb", "start-server"], check=True)
-        time.sleep(30)
-        if int(count) > 10:
-            time.sleep(30)
+        time.sleep(2)
+        # if int(count) > 10:
+        #     time.sleep(30)
 
 
     except subprocess.CalledProcessError as e:
@@ -41,6 +41,16 @@ def find_package_running(package, device):
 def input_text_device(text, device):
     try:
         subprocess.run([LDCONSOLE_PATH] + ["action", "--name", device.name, "--key", "call.input", "--value", text])
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+
+
+def open_link(link, device):
+    try:
+        subprocess.run([LDCONSOLE_PATH] + ["adb", "--name", device.name, "--command",
+                                           f"shell am start -a android.intent.action.VIEW -d {link}"]
+                       , shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
     except subprocess.CalledProcessError as e:
         print(f"Error: {e}")

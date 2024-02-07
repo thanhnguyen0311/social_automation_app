@@ -6,6 +6,6 @@ class EmailEnum(Enum):
     HOTMAIL = "hotmail.com"
 
 
-class EmailActionEnum(Enum):
+class EmailTaskEnum(Enum):
     NO_ACTION = "Choose an action"
     CREATE = "Create email"
