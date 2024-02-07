@@ -44,3 +44,4 @@ class Driver:
         quit_ld(self.data.device)
         self.data.device.is_running = False
 
+    
