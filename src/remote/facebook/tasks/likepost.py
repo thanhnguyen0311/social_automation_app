@@ -15,6 +15,7 @@ class LikePostFB(LoginFacebook):
 
     def __run__(self):
         self.driver = super().__run__()
+        time.sleep(5)
         open_link(link=self.link, device=self.data.device)
         time.sleep(5)
         if find_text_in_screenshot(self.driver, "Open with"):
@@ -29,9 +30,8 @@ class LikePostFB(LoginFacebook):
 
             time.sleep(3)
 
-            super().__find_element__(
-                xpath='(//android.view.ViewGroup[@content-desc="Like button. Double tap and hold to react."])[1]').click()
-
+            self.driver.find_element(By.XPATH, '(//android.view.ViewGroup[@content-desc="Like button. Double tap and hold to react."])[1]').click()
+            time.sleep(3)
             print(f"Liked : {self.link}")
             super().__stop__()
             return

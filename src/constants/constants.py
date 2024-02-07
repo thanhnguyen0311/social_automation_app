@@ -9,6 +9,8 @@ vms_path = os.path.join(LDPLAYER_PATH, "vms")
 config_path = os.path.join(LDPLAYER_PATH, "vms", "config")
 LOGO_PATH = os.path.join("assets", "img", "logo.png")
 pytesseract_PATH = os.path.join("Tesseract-OCR", "tesseract.exe")
+LAMNGOCTHANH_PAGEID = "107073257616977"
+LAMNGOCTHANH_ACCESSTOKEN = "EAAGDTcgCjZBoBOwLojM6cNiokFXObOebLz4p7QgHB1d7Nolj4paoxCZBBRCMfZBf0qjlzqnY73IjqjNTyRiQ8MgZBEirSePlzdCHVGYEQAsnh8ZA2RFtnXnagy0GNqE1USZAs7NySYAR9LUMNWximhGBhA2zdbgZAZAkHVifgVUmsBWQPwpALmL2msVsPVZBR3PcZD"
 
 CLONE_LD_DATA = True
 

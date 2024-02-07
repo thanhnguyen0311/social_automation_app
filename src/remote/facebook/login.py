@@ -19,13 +19,13 @@ class LoginFacebook(Driver):
 
     def __run__(self):
         if self.data.status == "REGISTERED":
-            time.sleep(30)
+            time.sleep(20)
         while True:
             try:
                 self.driver = super().__run__()
                 super().__find_element__(xpath='//android.widget.TextView[@content-desc="Facebook"]').click()
                 if self.data.status == "REGISTERED":
-                    time.sleep(15)
+                    time.sleep(10)
                 time.sleep(10)
 
                 checkpoint = capture_checkpoint(self.driver, (400, 55, 600, 130))
@@ -36,12 +36,13 @@ class LoginFacebook(Driver):
                     print(f"Login successful to account {self.data.email.email_address}.")
                     return self.driver
 
-                self.pass_login_checkpoint()
-                if self.data.status == "CHECKPOINT":
-                    self.driver.quit()
-                    quit_ld(self.data.device)
-                    remove_ld(self.data.device)
-                    return
+                else:
+                    self.pass_login_checkpoint()
+                    if self.data.status == "CHECKPOINT":
+                        self.driver.quit()
+                        quit_ld(self.data.device)
+                        remove_ld(self.data.device)
+                        return
 
                 if find_text_in_screenshot(self.driver, "Forgot password"):
                     element = super().__find_element__(
@@ -106,8 +107,6 @@ class LoginFacebook(Driver):
 
     def pass_login_checkpoint(self):
         while True:
-            if not self.is_running:
-                return None
             time.sleep(3)
             if (find_text_in_screenshot(self.driver, "Check your notifications") or
                     find_text_in_screenshot(self.driver, "Waiting for approval")):

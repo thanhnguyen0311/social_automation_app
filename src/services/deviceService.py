@@ -185,6 +185,7 @@ def run_account_devices(list_account):
                     print(f"Start LD for {account.device.name}")
                     time.sleep(2)
                 run_ld(account.device)
+
         break
     time.sleep(20)
     sort_ld()

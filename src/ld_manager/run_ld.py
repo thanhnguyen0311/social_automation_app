@@ -5,7 +5,6 @@ import time
 
 from src.constants.constants import LDCONSOLE_PATH
 
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 
