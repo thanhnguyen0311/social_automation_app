@@ -33,7 +33,7 @@ class ListDevices:
                 start_time = time.time()
                 while task.is_running:
                     if task.name == FBTaskEnum.LIKE_POST.value:
-                        if time.time() - start_time >= 100:
+                        if time.time() - start_time >= 90:
                             ListDevices.cancel_current_task()
                     if not task.is_running:
                         ListDevices.running_task = None

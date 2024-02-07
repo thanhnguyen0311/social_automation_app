@@ -183,7 +183,7 @@ def run_account_devices(list_account):
                     create_device(account)
                 else:
                     print(f"Start LD for {account.device.name}")
-                    time.sleep(2)
+                    time.sleep(1)
                 run_ld(account.device)
 
         break
