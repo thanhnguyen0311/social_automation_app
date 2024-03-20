@@ -32,7 +32,6 @@ class AddEmail(tk.Toplevel):
         self.email_entry = ttk.Entry(self, textvariable=self.email_var, width=20, font=("Helvetica", 11))
         self.email_entry.grid(row=0, column=1, columnspan=4, sticky=tk.NSEW, pady=5)
 
-
         tk.Label(self, text="Email type: ", font=("Helvetica", 10), bg='lightblue').grid(row=1, column=0, sticky=tk.W,
                                                                                          pady=5)
         self.option_email = tk.StringVar()

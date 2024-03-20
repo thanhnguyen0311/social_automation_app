@@ -40,8 +40,6 @@ def get_all_emails(user_id):
         query = "SELECT * FROM emails where user_id = %s and is_deleted = False"
         cursor.execute(query, (user_id,))
         result = cursor.fetchall()
-        cursor.close()
-        connection.close()
         emails = {}
         for row in result:
             emails[row['email_id']] = EmailAccount(email_id=row['email_id'],
@@ -57,6 +55,8 @@ def get_all_emails(user_id):
                                                    tiktok=bool(row['tiktok']),
                                                    telegram=bool(row['telegram'])
                                                    )
+        cursor.close()
+        connection.close()
 
         return emails
 
