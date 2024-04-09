@@ -3,7 +3,7 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-LDPLAYER_PATH = "C:\LDPlayer\LDPlayer9"
+LDPLAYER_PATH = "E:\LDPlayer\LDPlayer9"
 LDCONSOLE_PATH = os.path.join(LDPLAYER_PATH, "ldconsole.exe")
 vms_path = os.path.join(LDPLAYER_PATH, "vms")
 config_path = os.path.join(LDPLAYER_PATH, "vms", "config")

@@ -47,12 +47,10 @@ class LikePostFB(LoginFacebook):
 
                 scroll_count = 5
                 # Perform the scrolling action using TouchAction
-                if array[0] == LAMNGOCTHANH_PAGEID:
-                    scroll_count = 0
-
-                for _ in range(scroll_count):
-                    self.driver.swipe(start_x, start_y, end_x, end_y, duration=500)
-                    time.sleep(1)
+                if array[0] == HCSPA_PAGEID:
+                    for _ in range(scroll_count):
+                        self.driver.swipe(start_x, start_y, end_x, end_y, duration=500)
+                        time.sleep(1)
 
                 element = self.driver.find_element_by_android_uiautomator(
                     'new UiScrollable(new UiSelector().scrollable(true).instance(0)).scrollIntoView(new UiSelector().description("Like button. Double tap and hold to react."));')
