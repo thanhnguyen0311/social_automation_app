@@ -10,8 +10,8 @@ from src.services.deviceService import run_account_devices
 
 
 class FacebookTask(Task):
-    def __init__(self, function, args, list_account, name):
-        super().__init__(function, args, list_account, name)
+    def __init__(self, function, args, list_account, name, cooldown=1):
+        super().__init__(function, args, list_account, name, cooldown)
 
     def _run_task(self, task_creator, args=None):
         run_account_devices(self.list_account)

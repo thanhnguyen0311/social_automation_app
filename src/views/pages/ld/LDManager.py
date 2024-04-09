@@ -7,6 +7,7 @@ from src.ld_manager.reboot_ld import reboot_ld
 from src.ld_manager.remove_ld import remove_ld
 from src.ld_manager.run_ld import run_ld
 from src.ld_manager.sort_ld import sort_ld
+from src.models.Facebook import FBAccount
 from src.models.ListDevices import ListDevices
 from src.services.deviceService import create_device
 
@@ -57,7 +58,8 @@ class LDManager_Page(tk.Frame):
         tk.Label(self.device_list, text=device.name).grid(row=row, column=1, sticky="news")
         tk.Label(self.device_list, text=device.imei).grid(row=row, column=2, sticky="news")
         tk.Label(self.device_list, text=device.uuid).grid(row=row, column=3, sticky="news")
-        if device.is_running:
+        check = False
+        if check:
             tk.Label(self.device_list, text="• Active", fg="green").grid(row=row, column=4)
         else:
             tk.Label(self.device_list, text="Offline", fg="gray").grid(row=row, column=4)

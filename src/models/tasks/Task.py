@@ -1,8 +1,9 @@
 class Task:
-    def __init__(self, function, args=None, list_account=None, name=None):
+    def __init__(self, function, args=None, list_account=None, name=None, cooldown=1):
         self.function = function
         self.name = name
         self.is_running = False
+        self.cooldown = cooldown
         self.list_account = list_account if list_account is not None else []
         self.args = args if args is not None else []
 

@@ -9,7 +9,7 @@ def get_posts(PAGE_ID, PAGE_TOKEN):
         response = requests.get(url)
         if response.status_code == 200:
             data = response.json()
-            posts = data['data'][:5]
+            posts = data['data'][:10]
             post_ids = []
             for post in posts:
                 post_ids.append(post['id'])
@@ -23,6 +23,7 @@ def get_posts(PAGE_ID, PAGE_TOKEN):
 
 
 def check_new_posts(post_ids):
+    new_post_id = []
     for post_id in post_ids:
         print(f"checking {post_id} ")
         try:
@@ -41,9 +42,10 @@ def check_new_posts(post_ids):
                 connection.commit()
                 cursor.close()
                 connection.close()
-                return post_id
+                new_post_id.append(post_id)
+                continue
 
         except Exception as e:
             raise ConnectionError("Could not connect to database") from e
 
-    return None
+    return new_post_id

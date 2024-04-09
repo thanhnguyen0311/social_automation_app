@@ -183,10 +183,9 @@ def run_account_devices(list_account):
                     create_device(account)
                 else:
                     print(f"Start LD for {account.device.name}")
-                    time.sleep(1)
                 run_ld(account.device)
 
         break
-    time.sleep(20)
+    time.sleep(30)
     sort_ld()
     print("Restart adb server....")

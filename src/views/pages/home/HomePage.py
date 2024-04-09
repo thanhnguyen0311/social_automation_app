@@ -1,10 +1,11 @@
+import random
 import threading
 import time
 import tkinter as tk
 from tkinter import ttk
-import random
 
-from src.constants.constants import LAMNGOCTHANH_PAGEID, LAMNGOCTHANH_ACCESSTOKEN
+from src.constants.constants import LAMNGOCTHANH_PAGEID, LAMNGOCTHANH_ACCESSTOKEN, HCSPA_PAGEID, \
+    HCSPA_PAGEID_ACCESSTOKEN
 from src.enum.FBTaskEnum import FBTaskEnum
 from src.ld_manager.get_list_ld import get_list_ld
 from src.models.ListDevices import ListDevices
@@ -125,18 +126,21 @@ class Home_Page(tk.Frame):
                 time.sleep(60)
                 continue
             post_ids = get_posts(LAMNGOCTHANH_PAGEID, LAMNGOCTHANH_ACCESSTOKEN)
+            post_ids = post_ids + get_posts(HCSPA_PAGEID, HCSPA_PAGEID_ACCESSTOKEN)
             print(post_ids)
             post_id = check_new_posts(post_ids)
-            if post_id is not None:
-                print(f"found new post {post_id}")
+            # post_id = ['238210359712854_786052973541779']
+            if post_id:
+                print(f"found new posts {post_id}")
                 list_account = self.ready_accounts
                 while list_account:
                     selected_elements = random.sample(list_account, min(10, len(list_account)))
                     task = FacebookTask(function="",
                                         args=None,
                                         list_account=selected_elements,
-                                        name=FBTaskEnum.LIKE_POST.value)
-                    task.args = (f'https://www.facebook.com/{post_id}',)
+                                        name=FBTaskEnum.LIKE_POST.value,
+                                        cooldown=len(post_id))
+                    task.args = (post_id,)
                     task.function = task.like_post
                     ListDevices.add_task(task)
 
