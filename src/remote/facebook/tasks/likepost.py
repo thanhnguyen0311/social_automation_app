@@ -1,10 +1,7 @@
 import random
 import time
 
-from appium.webdriver.common.mobileby import MobileBy
-from appium.webdriver.common.touch_action import TouchAction
 from selenium.common.exceptions import WebDriverException
-from selenium.webdriver import TouchActions
 from selenium.webdriver.common.by import By
 
 from src.constants.constants import COMMENTS, LAMNGOCTHANH_PAGEID, LNT_COMMENTS, HCSPA_COMMENTS, HCSPA_PAGEID
@@ -23,31 +20,22 @@ class LikePostFB(LoginFacebook):
         time.sleep(4)
         for post_id in self.link:
             array = post_id.split("_")
-            open_link(link=f'https://m.facebook.com/{array[1]}', device=self.data.device)
+            open_link(link=f'https://m.facebook.com/{post_id}', device=self.data.device)
             time.sleep(3)
-            if find_text_in_screenshot(self.driver, "Open with"):
-                self.driver.find_element(By.XPATH,
-                                         '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                         '.widget.FrameLayout/android.widget.ScrollView/android.widget.ListView'
-                                         '/android.widget.LinearLayout[1]/android.widget.LinearLayout').click()
-                self.driver.find_element(By.XPATH,
-                                         '/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android'
-                                         '.widget.FrameLayout/android.widget.ScrollView/android.widget.LinearLayout'
-                                         '/android.widget.Button[2]').click()
-                time.sleep(5)
 
             try:
-                screen_size = self.driver.get_window_size()
 
-                # Define start and end coordinates for the swipe
-                start_x = screen_size['width'] // 2
-                start_y = screen_size['height'] // 2
-                end_x = start_x
-                end_y = screen_size['height'] * 0.2  # Adjust this value if needed for precise scrolling
-
-                scroll_count = 5
                 # Perform the scrolling action using TouchAction
                 if array[0] == HCSPA_PAGEID:
+                    screen_size = self.driver.get_window_size()
+
+                    # Define start and end coordinates for the swipe
+                    start_x = screen_size['width'] // 2
+                    start_y = screen_size['height'] // 2
+                    end_x = start_x
+                    end_y = screen_size['height'] * 0.2  # Adjust this value if needed for precise scrolling
+
+                    scroll_count = 3
                     for _ in range(scroll_count):
                         self.driver.swipe(start_x, start_y, end_x, end_y, duration=500)
                         time.sleep(1)

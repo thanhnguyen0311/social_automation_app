@@ -26,7 +26,7 @@ class LoginFacebook(Driver):
                 self.driver.find_element(By.XPATH, '//android.widget.TextView[@content-desc="Facebook"]').click()
                 if self.data.status == "REGISTERED":
                     time.sleep(10)
-                time.sleep(10)
+                time.sleep(13)
 
                 checkpoint = capture_checkpoint(self.driver, (400, 55, 600, 130))
                 print(checkpoint)
