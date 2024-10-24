@@ -8,7 +8,6 @@ pip install selenium Pillow<br>
 pip install pytesseract<br>
 pip install mysql-connector-python<br><br><br>
 
-secret token = jPJ7ksubWuswP7WbyHkqq8xh5zM3cdQ0Y7BeSw9F5whKLfyrp01Hse7QeJKtXW30
 https://story-shack-cdn-v2.glitch.me/generators/vietnamese-name-generator?count=3
 https://story-shack-cdn-v2.glitch.me/generators/username-generator?count=6
 
@@ -84,5 +83,3 @@ CREATE TABLE IF NOT EXISTS fb_accounts (
     FOREIGN KEY (user_id) REFERENCES `users`(user_id),
     FOREIGN KEY (email_id) REFERENCES emails(email_id)
 );
-
-INSERT INTO users (name, username, password, email, phone) VALUES ('Thanh', 'nct031194', '272337839', 'nct031194@icloud.com', '0937404039');
