@@ -33,8 +33,8 @@ class MailList(ttk.Treeview):
 
         self.column("ID", width=3, anchor='center')
         self.column("name", width=60, anchor='center')
-        self.column("email", width=80, anchor='center')
-        self.column("device", width=40, anchor='center')
+        self.column("email", width=100, anchor='center')
+        self.column("device", width=30, anchor='center')
         self.column("create_date", width=40, anchor='center')
         self.column("facebook", width=3, anchor='center')
         self.column("tiktok", width=3, anchor='center')
@@ -53,6 +53,10 @@ class MailList(ttk.Treeview):
             if email.is_deleted:
                 continue
 
+            email_address = email.email_address
+            if email.secure:
+                email_address = email.email_address + " ✔️"
+
             device_imei = ""
             if email.device:
                 device_imei = email.device.imei
@@ -60,7 +64,7 @@ class MailList(ttk.Treeview):
             self.insert("", "end", iid=email_id,
                         values=(id,
                                 email.first_name + " " + email.last_name,
-                                email.email_address,
+                                email_address,
                                 device_imei,
                                 email.create_date,
                                 "X" if email.facebook else "",
@@ -151,7 +155,8 @@ class MailList(ttk.Treeview):
         return list_email
 
     def remove_accounts(self):
-        for item in self.selection():
-            if remove_email(item) is True:
-                print("Deleted account id {0}".format(item))
+        list_email = self.get_selected()
+        for email in list_email:
+            if remove_email(email) is True:
+                print("Deleted account id {0}".format(email.email_address))
         self.on_refresh_clicked()

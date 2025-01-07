@@ -1,11 +1,9 @@
-import threading
-import time
 import tkinter as tk
 from tkinter import ttk
 
-from src.enum.EmailEnum import EmailActionEnum
-from src.ld_manager.run_ld import run_list_ld
-from src.remote.email.register import register_email
+from src.enum.EmailEnum import EmailTaskEnum
+from src.models.ListDevices import ListDevices
+from src.models.tasks.EmailTask import EmailTask
 from src.views.pages.email.AddPopup import AddEmail
 from src.views.pages.email.EmailTree import MailList
 
@@ -19,6 +17,10 @@ class EmailManager(tk.Frame):
         self.style.configure('Treeview', rowheight=25)
         button_frame = tk.Frame(self, bg='white')
         button_frame.pack(padx=5, pady=20, anchor=tk.NW, fill=tk.BOTH)
+
+        self.mail_list = MailList(self)
+        self.mail_list.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
+
         button_add = tk.Button(button_frame,
                                text="ADD",
                                width=10, height=1,
@@ -30,14 +32,14 @@ class EmailManager(tk.Frame):
         button_refresh.grid(row=0, column=1, padx=5)
         button_remove = tk.Button(button_frame,
                                   text="REMOVE",
-                                  width=10, height=1)
+                                  width=10, height=1, command=self.mail_list.remove_accounts)
         button_remove.grid(row=0, column=2, padx=5)
 
         self.option = tk.StringVar()
-        self.option.set(EmailActionEnum.NO_ACTION.value)
+        self.option.set(EmailTaskEnum.NO_ACTION.value)
         option_menu = ttk.Combobox(button_frame,
                                    textvariable=self.option,
-                                   values=[option.value for option in EmailActionEnum])
+                                   values=[option.value for option in EmailTaskEnum])
         option_menu.grid(row=1, column=0, columnspan=2,
                          padx=5, pady=10, sticky=tk.NSEW)
 
@@ -47,9 +49,6 @@ class EmailManager(tk.Frame):
                                   command=self.on_option_selected)
         button_action.grid(row=1, column=2,
                            padx=5, pady=10, sticky=tk.W)
-
-        self.mail_list = MailList(self)
-        self.mail_list.pack(padx=10, pady=5, fill=tk.BOTH, expand=True)
 
     def choose_popup(self, popup):
         if popup == AddEmail:
@@ -61,11 +60,18 @@ class EmailManager(tk.Frame):
     def on_option_selected(self):
         selected_option = self.option.get()
         list_account = self.mail_list.get_selected()
+        task = EmailTask(function="",
+                         args=None,
+                         list_account=list_account,
+                         name="")
+        task_mapping = {
+            EmailTaskEnum.CREATE: task.create_emails,
+        }
+        selected_enum = EmailTaskEnum(selected_option)
 
-        list_account = run_list_ld(list_account)
+        if selected_enum in task_mapping:
+            task.name = selected_enum.value
+            task.function = task_mapping[selected_enum]
 
-        if selected_option == EmailActionEnum.CREATE.value:
-            for account in list_account:
-                account.thread = threading.Thread(target=register_email, args=(account,))
-                account.thread.start()
-                time.sleep(3)
+        ListDevices.add_task(task)
+

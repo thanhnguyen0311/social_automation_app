@@ -250,7 +250,7 @@ def registerFacebook(userData):
         driver.find_element_by_xpath(
             "/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.ScrollView/android.widget.LinearLayout/android.widget.Button[1]").click()
 
-        time.sleep(2)
+        time.sleep(1)
         driver.find_element_by_xpath('//android.widget.Button[@content-desc="Tiếp"]/android.view.ViewGroup').click()
         time.sleep(1)
         driver.find_element_by_xpath('//android.widget.Button[@content-desc="Tiếp"]/android.view.ViewGroup').click()

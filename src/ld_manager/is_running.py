@@ -12,7 +12,6 @@ def is_running(device):
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if result.returncode == 0:
             output = result.stdout
-
             if output == "running":
                 return True
             if output == "stop":

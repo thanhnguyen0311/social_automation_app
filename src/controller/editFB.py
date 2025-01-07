@@ -1,7 +1,4 @@
-from src.models.Email import EmailAccount
-
-
-class AddFacebookController:
+class EditFacebookController:
     def __init__(self, model, view):
         self.model = model
         self.view = view
@@ -18,7 +15,7 @@ class AddFacebookController:
             self.model.secure = data['secure']
             self.model.clone_target_uid = data['clone_target_uid']
             self.model.save(data['email'])
-            self.view.show_success(f'The facebook {data["email"]} added!')
+            self.view.show_success(f'The facebook {data["email"]} saved!')
 
         except Exception as error:
             self.view.show_error(error)

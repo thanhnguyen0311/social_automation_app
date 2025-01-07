@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS emails (
 	tiktok bit(1) default(0),
 	telegram bit(1) default(0),
 	phone VARCHAR(20),
+	secure bit(1) default(0),
     FOREIGN KEY (user_id) REFERENCES `users`(user_id),
 	FOREIGN KEY (device_id) REFERENCES devices(device_id);
 );
@@ -78,6 +79,7 @@ CREATE TABLE IF NOT EXISTS fb_accounts (
 	birthday Date,
 	auth_2fa VARCHAR(255),
 	phone VARCHAR(20),
+	secure bit(1) default(0),
     FOREIGN KEY (device_id) REFERENCES devices(device_id),
     FOREIGN KEY (user_id) REFERENCES `users`(user_id),
     FOREIGN KEY (email_id) REFERENCES emails(email_id)
